@@ -673,6 +673,7 @@ G.unitframe.buffwatch = {
 	},
 	PALADIN = {
 		ClassBuff(53563, "TOPRIGHT", {0.7, 0.3, 0.7}),	 -- Beacon of Light
+		ClassBuff(156910, "TOPRIGHT", {0.7, 0.1, 0.7}),	 -- Beacon of Faith
 		ClassBuff(1022, "BOTTOMRIGHT", {0.2, 0.2, 1}, true),	-- Hand of Protection
 		ClassBuff(1044, "BOTTOMRIGHT", {0.89, 0.45, 0}, true),	-- Hand of Freedom
 		ClassBuff(1038, "BOTTOMRIGHT", {0.93, 0.75, 0}, true),	-- Hand of Salvation
@@ -680,6 +681,9 @@ G.unitframe.buffwatch = {
 		ClassBuff(114039, "BOTTOMRIGHT", {164/255, 105/255, 184/255}), -- Hand of Purity
 		ClassBuff(148039, 'TOPLEFT', {0.93, 0.75, 0}), -- Sacred Shield
 		ClassBuff(156322, 'BOTTOMLEFT', {0.87, 0.7, 0.03}), -- Eternal Flame
+		ClassBuff(20925, 'TOPLEFT', {0.93, 0.75, 0}), -- Sacred Shield
+		ClassBuff(114163, 'TOPLEFT', {0.87, 0.7, 0.03}), -- Eternal Flame
+		ClassBuff(86273, 'BOTTOMLEFT', {0.7, 0.4, 0}),	 -- Illuminated Healing
 	},
 	SHAMAN = {
 		ClassBuff(61295, "TOPRIGHT", {0.7, 0.3, 0.7}),	 -- Riptide
