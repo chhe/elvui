@@ -14,6 +14,30 @@ L["PANEL_DESC"] = "Ajusta el tamaño de los paneles izquierdo y derecho. Esto af
 L["SKINS_DESC"] = "Configura los Ajustes de Cubiertas."
 L["TOGGLESKIN_DESC"] = "Activa/Desactiva esta cubierta."
 L["TOOLTIP_DESC"] = "Configuración para las Descripciones Emergentes."
+L["SEARCH_SYNTAX_DESC"] = [=[With the new addition of LibItemSearch, you now have access to much more advanced item searches. The following is a documentation of the search syntax. See the full explanation at: https://github.com/Jaliborc/LibItemSearch-1.2/wiki/Search-Syntax.
+
+Specific Searching:
+    • q:[quality] or quality:[quality]. For instance, q:epic will find all epic items.
+    • l:[level], lvl:[level] or level:[level]. For example, l:30 will find all items with level 30.
+    • t:[search], type:[search] or slot:[search]. For instance, t:weapon will find all weapons.
+    • n:[name] or name:[name]. For instance, typing n:muffins will find all items with names containing "muffins".
+    • s:[set] or set:[set]. For example, s:fire will find all items in equipment sets you have with names that start with fire.
+    • tt:[search], tip:[search] or tooltip:[search]. For instance, tt:binds will find all items that can be bound to account, on equip, or on pickup.
+
+	
+Search Operators:
+    • ! : Negates a search. For example, !q:epic will find all items that are NOT epic.
+    • | : Joins two searches. Typing q:epic | t:weapon will find all items that are either epic OR weapons.
+    • & : Intersects two searches. For instance, q:epic & t:weapon will find all items that are epic AND weapons
+    • >, <, <=, => : Performs comparisons on numerical searches. For example, typing lvl: >30 will find all items with level HIGHER than 30.
+
+
+The following search keywords can also be used:
+    • soulbound, bound, bop : Bind on pickup items.
+    • bou : Bind on use items.
+    • boe : Bind on equip items.
+    • boa : Bind on account items.
+    • quest : Quest bound items.]=];
 L['TEXT_FORMAT_DESC'] = [=[Proporciona una cadena para cambiar el formato de texto.
 
 Ejemplos:
@@ -118,6 +142,7 @@ L["List of items to ignore when sorting. If you wish to add multiple items you m
 L['Money Format'] = true;
 L["Panel Width (Bags)"] = "Ancho del Panel (Bolsas)"
 L["Panel Width (Bank)"] = "Ancho del Panel (Banco)"
+L["Search Syntax"] = true;
 L["Set the size of your bag buttons."] = "Establece el tamaño de tus botones de la bolsa."
 L['Short (Whole Numbers)'] = true;
 L['Short'] = true;
@@ -301,11 +326,13 @@ L["Attempt to support eyefinity/nvidia surround."] = true;
 L["Auto Greed/DE"] = "Codicia/Desencantar Automático"
 L["Auto Repair"] = "Reparación Automática"
 L["Auto Scale"] = "Escalado Automático"
+L["Auto"] = true;
 L["Automatically accept invites from guild/friends."] = "Aceptar de forma automática invitaciones de la hermandad/amigos."
 L["Automatically repair using the following method when visiting a merchant."] = "Repara de forma automática usando el siguiente método cuando visites un comerciante."
 L["Automatically scale the User Interface based on your screen resolution"] = "Escala de forma automática la interfaz de usuario dependiendo de la resolución de pantalla"
 L["Automatically select greed or disenchant (when available) on green quality items. This will only work if you are the max level."] = "Tira codicia o desencanta (si se puede) automáticamente para los objetos verdes. Esto sólo funciona si ya tienes el nivel máximo."
 L["Automatically vendor gray items when visiting a vendor."] = "Vender automáticamente los objetos grises al visitar al vendedor."
+L["Bonus Reward Position"] = true;
 L["Bottom Panel"] = "Panel Inferior"
 L['Chat Bubbles Style'] = true;
 L['Direction the bar moves on gains/losses'] = true;
@@ -317,6 +344,7 @@ L["Enable/Disable the loot frame."] = "Activa/Desactiva el marco de botín."
 L["Enable/Disable the loot roll frame."] = "Activa/Desactiva el marco de sorteo de botín."
 L["Enable/Disable the minimap. |cffFF0000Warning: This will prevent you from seeing the consolidated buffs bar, and prevent you from seeing the minimap datatexts.|r"] = "Activa/Desactiva el minimapa. |cffFF0000Atención: Esto evita que veas la barra de los beneficios consolidados, y evita que veas los textos de datos del minimapa.|r"
 L["General"] = "General"
+L["Height of the objective tracker. Increase size to be able to see more objectives."] = true;
 L["Hide Error Text"] = "Ocultar Texto de Error"
 L["Hides the red error text at the top of the screen while in combat."] = "Oculta el texto rojo de error en la parte superior de la pantalla mientras estás en combate."
 L["Log Taints"] = "Registro Exhaustivo"
@@ -326,6 +354,8 @@ L["Loot"] = "Botín"
 L["Make the world map smaller."] = true;
 L["Multi-Monitor Support"] = true;
 L["Name Font"] = "Fuente para Nombres"
+L["Objective Frame Height"] = true;
+L["Position of bonus quest reward frame relative to the objective tracker."] = true;
 L["Remove Backdrop"] = "Quitar Fondo"
 L["Reset all frames to their original positions."] = "Coloca todos los marcos en sus posiciones originales"
 L["Reset Anchors"] = "Restaurar Fijadores"
@@ -497,6 +527,7 @@ L["Non-Raid Frame"] = "No-Banda"
 L["Pet Battle"] = "Combate de Mascotas"
 L["Petition Frame"] = "Petición"
 L["PvP Frames"] = "JcJ"
+L["Quest Choice"] = true;
 L["Quest Frames"] = "Misión"
 L["Raid Frame"] = "Banda"
 L["Reforge Frame"] = "Reforje"
@@ -521,7 +552,8 @@ L["Bags Only"] = true;
 L["Bank Only"] = true;
 L["Both"] = true;
 L['Cursor Anchor'] = true;
-L["Display guild ranks if a unit is guilded."] = "Mostrar rangos de hermandad si el jugador pertenece a una."
+L["Custom Faction Colors"] = true;
+L['Display guild ranks if a unit is guilded.'] = "Mostrar rangos de hermandad si el jugador pertenece a una."
 L["Display how many of a certain item you have in your possession."] = "Despliega la cantidad de un determinado objeto que posees."
 L["Display player titles."] = "Mostrar los títulos de los jugadores"
 L['Display the players talent spec and item level in the tooltip, this may not immediately update when mousing over a unit.'] = true;
@@ -563,7 +595,6 @@ L["At what point should the text be displayed. Set to -1 to disable."] = "En qu�
 L['Attach Text to Power'] = true;
 L["Attach To"] = "Adjuntar a"
 L["Aura Bars"] = "Barra de Auras"
-L["Aura Spacing"] = true;
 L["Auto-Hide"] = "Ocultar Automáticamente"
 L["Bad"] = "Hostil"
 L["Bars will transition smoothly."] = "Las barras harán las transiciones suavemente."
@@ -663,7 +694,9 @@ L["Filled"] = "Lleno"
 L["Filter Type"] = "Tipo de Filtro"
 L["Force Off"] = "Fuerza Apagada"
 L["Force On"] = "Fuerza Encendida"
+L['Force Reaction Color'] = true;
 L["Force the frames to show, they will act as if they are the player frame."] = "Forzar a mostrar los marcos, esto funcionará si es el marco del jugador."
+L['Forces reaction color instead of class color on units controlled by players.'] = true;
 L["Format"] = "Formato"
 L["Frame"] = "Marco"
 L["Frequent Updates"] = "Actualizaciones Frecuentes"

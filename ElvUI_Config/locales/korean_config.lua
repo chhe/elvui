@@ -14,6 +14,30 @@ L["PANEL_DESC"] = "좌우 패널의 크기를 조절합니다. 이 값에 따라
 L["SKINS_DESC"] = "다른 애드온이나 게임 내 여러 프레임에 체크 시 스킨을 적용합니다."
 L["TOGGLESKIN_DESC"] = "체크 시 해당 프레임에 스킨을 사용합니다."
 L["TOOLTIP_DESC"] = "툴팁에 관련된 옵션들입니다."
+L["SEARCH_SYNTAX_DESC"] = [=[With the new addition of LibItemSearch, you now have access to much more advanced item searches. The following is a documentation of the search syntax. See the full explanation at: https://github.com/Jaliborc/LibItemSearch-1.2/wiki/Search-Syntax.
+
+Specific Searching:
+    • q:[quality] or quality:[quality]. For instance, q:epic will find all epic items.
+    • l:[level], lvl:[level] or level:[level]. For example, l:30 will find all items with level 30.
+    • t:[search], type:[search] or slot:[search]. For instance, t:weapon will find all weapons.
+    • n:[name] or name:[name]. For instance, typing n:muffins will find all items with names containing "muffins".
+    • s:[set] or set:[set]. For example, s:fire will find all items in equipment sets you have with names that start with fire.
+    • tt:[search], tip:[search] or tooltip:[search]. For instance, tt:binds will find all items that can be bound to account, on equip, or on pickup.
+
+	
+Search Operators:
+    • ! : Negates a search. For example, !q:epic will find all items that are NOT epic.
+    • | : Joins two searches. Typing q:epic | t:weapon will find all items that are either epic OR weapons.
+    • & : Intersects two searches. For instance, q:epic & t:weapon will find all items that are epic AND weapons
+    • >, <, <=, => : Performs comparisons on numerical searches. For example, typing lvl: >30 will find all items with level HIGHER than 30.
+
+
+The following search keywords can also be used:
+    • soulbound, bound, bop : Bind on pickup items.
+    • bou : Bind on use items.
+    • boe : Bind on equip items.
+    • boa : Bind on account items.
+    • quest : Quest bound items.]=];
 L["TEXT_FORMAT_DESC"] = [=[글자가 표시되는 형식을 변경할 수 있습니다.
 
 
@@ -98,17 +122,17 @@ L["Visibility State"] = "표시 자동전환 조건"
 L["Width Multiplier"] = "배경 가로길이 배율"
 L[ [=[This works like a macro, you can run different situations to get the actionbar to page differently.
  Example: '[combat] 2;']=] ] = [=[이곳에 작성한 조건(예를 들어 전투여부)에 따라 이 행동단축바의 페이지를 자동으로 전환시킬 수 있습니다.
- 
+
 매크로처럼 작성하세요.
- 
+
 |cff2eb7e4< 예시 >|r
 |cffceff00[combat]2;1|r
  : 전투에 돌입하면 2번 페이지로 변경, 전투가 끝나면 1번 페이지로 변경 ]=]
 L[ [=[This works like a macro, you can run different situations to get the actionbar to show/hide differently.
  Example: '[combat] show;hide']=] ] = [=[이곳에 작성한 조건(예를 들어 전투여부)에 따라 이 행동단축바를 자동으로 숨기거나 표시할 수 있게 해줍니다.
- 
+
 매크로처럼 작성하세요.
- 
+
 |cff2eb7e4< 예시 >|r
 |cffceff00[combat]show;hide|r
  : 전투에 돌입하면 표시, 전투가 끝나면 숨김]=]
@@ -138,6 +162,7 @@ L["List of items to ignore when sorting. If you wish to add multiple items you m
 L['Money Format'] = true;
 L["Panel Width (Bags)"] = "통합가방 프레임 가로길이"
 L["Panel Width (Bank)"] = "통합은행 프레임 가로길이"
+L["Search Syntax"] = true;
 L["Set the size of your bag buttons."] = "가방바에서 슬롯의 크기를 결정합니다."
 L['Short (Whole Numbers)'] = true;
 L['Short'] = true;
@@ -324,11 +349,13 @@ L["Attempt to support eyefinity/nvidia surround."] = "다중모니터 기술인 
 L["Auto Greed/DE"] = "자동 차비/추출 선택"
 L["Auto Repair"] = "자동 수리"
 L["Auto Scale"] = "UI크기 자동조절"
+L["Auto"] = true;
 L["Automatically accept invites from guild/friends."] = "길드원이나 친구가 플레이어를 파티를 초대하면 자동으로 수락합니다."
 L["Automatically repair using the following method when visiting a merchant."] = "수리가 가능한 상점을 열면 이 옵션에서 선택한 자금으로 장비를 자동 수리합니다."
 L["Automatically scale the User Interface based on your screen resolution"] = "현재의 화면 해상도에 따라 자동으로 UI의 크기를 조절합니다."
 L["Automatically select greed or disenchant (when available) on green quality items. This will only work if you are the max level."] = "녹템 주사위창이 뜨면 자동으로 차비나 마력추출을 선택합니다. 이 기능은 오로지 만렙 캐릭터에서만 동작합니다."
 L["Automatically vendor gray items when visiting a vendor."] = "상점이 열리면 잡동사니를 자동으로 판매합니다."
+L["Bonus Reward Position"] = true;
 L["Bottom Panel"] = "하단 패널 표시"
 L["Chat Bubbles Style"] = "말풍선 디자인"
 L['Direction the bar moves on gains/losses'] = true;
@@ -342,6 +369,7 @@ L["Enable/Disable the minimap. |cffFF0000Warning: This will prevent you from see
 L["Enhance Raid Browser"] = "기타공격대창 향상"
 L["Enhance the raid browser frame by adding item level and talent spec information, also add average item level of group information to tooltips."] = "기타 공격대창 검색탭에 템렙과 특성을 표시하고, 파티의 평균템렙을 툴팁에 추가해줍니다."
 L["General"] = "일반"
+L["Height of the objective tracker. Increase size to be able to see more objectives."] = true;
 L["Hide Error Text"] = "전투중 에러 숨기기"
 L["Hides the red error text at the top of the screen while in combat."] = "화면 중앙 상단에 뜨는 여러 에러메시지(ex : 사정거리 부족)를 전투 중에는 띄우지 않게 합니다."
 L["Log Taints"] = "Taint 에러 표시"
@@ -351,6 +379,8 @@ L["Loot"] = "전리품 확인창"
 L["Make the world map smaller."] = true;
 L["Multi-Monitor Support"] = "다중모니터 지원"
 L["Name Font"] = "캐릭터 이름 글꼴"
+L["Objective Frame Height"] = true;
+L["Position of bonus quest reward frame relative to the objective tracker."] = true;
 L["Remove Backdrop"] = "표시하지 않음"
 L["Reset all frames to their original positions."] = "ElvUI 에서 움직일 수 있는 모든 프레임의 위치를 기본 위치로 초기화합니다."
 L["Reset Anchors"] = "위치 초기화"
@@ -522,6 +552,7 @@ L["Non-Raid Frame"] = "비공격대 프레임"
 L["Pet Battle"] = "애완동물대전 관련"
 L["Petition Frame"] = "GM 요청 창"
 L["PvP Frames"] = "PvP 창"
+L["Quest Choice"] = true;
 L["Quest Frames"] = "퀘스트 창"
 L["Raid Frame"] = "공격대 프레임"
 L["Reforge Frame"] = "재연마 창"
@@ -546,6 +577,7 @@ L["Bags Only"] = true;
 L["Bank Only"] = true;
 L["Both"] = true;
 L["Cursor Anchor"] = "툴팁을 마우스에 표시"
+L["Custom Faction Colors"] = true;
 L["Display guild ranks if a unit is guilded."] = "길드명과 함께 길드 등급도 표시합니다."
 L["Display how many of a certain item you have in your possession."] = "현재 툴팁으로 보고있는 아이템을 여러개 갖고 있다면 갯수를 표시합니다."
 L["Display player titles."] = "이름에 칭호도 표시합니다."
@@ -588,7 +620,6 @@ L["At what point should the text be displayed. Set to -1 to disable."] = "이 �
 L["Attach Text to Power"] = "자원바 기준 글자위치"
 L["Attach To"] = "기준 프레임"
 L["Aura Bars"] = "클래스타이머"
-L["Aura Spacing"] = true;
 L["Auto-Hide"] = "자동으로 숨기기"
 L["Bad"] = "나쁨"
 L["Bars will transition smoothly."] = "바의 증감을 부드럽게 표현합니다."
@@ -688,7 +719,9 @@ L["Filled"] = "하단에 깔기"
 L["Filter Type"] = "필터 종류"
 L["Force Off"] = "적용하지 않음"
 L["Force On"] = "강제 적용"
+L['Force Reaction Color'] = true;
 L["Force the frames to show, they will act as if they are the player frame."] = "해당 프레임의 유닛이 지금 있는 것처럼 강제로 표시하게 합니다."
+L['Forces reaction color instead of class color on units controlled by players.'] = true;
 L["Format"] = "형식"
 L["Frame"] = "유닛프레임"
 L["Frequent Updates"] = "자주 업데이트"

@@ -18,7 +18,7 @@ function E:UpdateBlizzardFonts()
 	local _, editBoxFontSize, _, _, _, _, _, _, _, _ = GetChatWindowInfo(1)
 
 	UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT = 12
-	CHAT_FONT_HEIGHTS = {12, 13, 14, 15, 16, 17, 18, 19, 20}
+	CHAT_FONT_HEIGHTS = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
 
 	if self.db.general.font:lower():find('pixel') then
 		MONOCHROME = 'MONOCHROME'
@@ -43,7 +43,7 @@ function E:UpdateBlizzardFonts()
 	--NAMEPLATE_FONT     = NAMEFONT
 	DAMAGE_TEXT_FONT   = COMBAT
 	STANDARD_TEXT_FONT = NORMAL
-	
+
 	if self.private.general.replaceBlizzFonts then
 		-- Base fonts
 		--SetFont(NumberFontNormal,					LSM:Fetch('font', 'ElvUI Pixel'), 10, 'MONOCHROMEOUTLINE', 1, 1, 1, 0, 0, 0)

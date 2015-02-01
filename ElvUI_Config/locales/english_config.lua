@@ -14,6 +14,30 @@ L['PANEL_DESC'] = "Adjust the size of your left and right panels, this will effe
 L["SKINS_DESC"] = "Adjust Skin settings."
 L["TOGGLESKIN_DESC"] = "Enable/Disable this skin."
 L["TOOLTIP_DESC"] = "Setup options for the Tooltip."
+L["SEARCH_SYNTAX_DESC"] = [=[With the new addition of LibItemSearch, you now have access to much more advanced item searches. The following is a documentation of the search syntax. See the full explanation at: https://github.com/Jaliborc/LibItemSearch-1.2/wiki/Search-Syntax.
+
+Specific Searching:
+    • q:[quality] or quality:[quality]. For instance, q:epic will find all epic items.
+    • l:[level], lvl:[level] or level:[level]. For example, l:30 will find all items with level 30.
+    • t:[search], type:[search] or slot:[search]. For instance, t:weapon will find all weapons.
+    • n:[name] or name:[name]. For instance, typing n:muffins will find all items with names containing "muffins".
+    • s:[set] or set:[set]. For example, s:fire will find all items in equipment sets you have with names that start with fire.
+    • tt:[search], tip:[search] or tooltip:[search]. For instance, tt:binds will find all items that can be bound to account, on equip, or on pickup.
+
+	
+Search Operators:
+    • ! : Negates a search. For example, !q:epic will find all items that are NOT epic.
+    • | : Joins two searches. Typing q:epic | t:weapon will find all items that are either epic OR weapons.
+    • & : Intersects two searches. For instance, q:epic & t:weapon will find all items that are epic AND weapons
+    • >, <, <=, => : Performs comparisons on numerical searches. For example, typing lvl: >30 will find all items with level HIGHER than 30.
+
+
+The following search keywords can also be used:
+    • soulbound, bound, bop : Bind on pickup items.
+    • bou : Bind on use items.
+    • boe : Bind on equip items.
+    • boa : Bind on account items.
+    • quest : Quest bound items.]=];
 L['TEXT_FORMAT_DESC'] = [=[Provide a string to change the text format.
 
 Examples:
@@ -116,6 +140,7 @@ L['List of items to ignore when sorting. If you wish to add multiple items you m
 L['Money Format'] = true;
 L['Panel Width (Bags)'] = true;
 L['Panel Width (Bank)'] = true;
+L["Search Syntax"] = true;
 L["Set the size of your bag buttons."] = true;
 L['Short (Whole Numbers)'] = true;
 L['Short'] = true;
@@ -290,11 +315,13 @@ L["Attempt to support eyefinity/nvidia surround."] = true;
 L['Auto Greed/DE'] = true;
 L["Auto Repair"] = true;
 L["Auto Scale"] = true;
+L["Auto"] = true;
 L["Automatically accept invites from guild/friends."] = true;
 L["Automatically repair using the following method when visiting a merchant."] = true;
 L["Automatically scale the User Interface based on your screen resolution"] = true;
 L['Automatically select greed or disenchant (when available) on green quality items. This will only work if you are the max level.'] = true;
 L["Automatically vendor gray items when visiting a vendor."] = true;
+L["Bonus Reward Position"] = true;
 L['Bottom Panel'] = true;
 L['Chat Bubbles Style'] = true;
 L['Direction the bar moves on gains/losses'] = true;
@@ -306,6 +333,7 @@ L["Enable/Disable the loot frame."] = true;
 L["Enable/Disable the loot roll frame."] = true;
 L['Enable/Disable the minimap. |cffFF0000Warning: This will prevent you from seeing the consolidated buffs bar, and prevent you from seeing the minimap datatexts.|r'] = true;
 L["General"] = true;
+L["Height of the objective tracker. Increase size to be able to see more objectives."] = true;
 L["Hide Error Text"] = true;
 L["Hides the red error text at the top of the screen while in combat."] = true;
 L["Log Taints"] = true;
@@ -315,6 +343,8 @@ L["Loot"] = true;
 L["Make the world map smaller."] = true;
 L["Multi-Monitor Support"] = true;
 L["Name Font"] = true;
+L["Objective Frame Height"] = true;
+L["Position of bonus quest reward frame relative to the objective tracker."] = true;
 L['Remove Backdrop'] = true;
 L["Reset all frames to their original positions."] = true;
 L["Reset Anchors"] = true;
@@ -486,6 +516,7 @@ L["Non-Raid Frame"] = true;
 L["Pet Battle"] = true;
 L["Petition Frame"] = true;
 L["PvP Frames"] = true;
+L["Quest Choice"] = true;
 L["Quest Frames"] = true;
 L["Raid Frame"] = true;
 L["Reforge Frame"] = true;
@@ -510,6 +541,7 @@ L["Bags Only"] = true;
 L["Bank Only"] = true;
 L["Both"] = true;
 L['Cursor Anchor'] = true;
+L["Custom Faction Colors"] = true;
 L['Display guild ranks if a unit is guilded.'] = true;
 L['Display how many of a certain item you have in your possession.'] = true;
 L['Display player titles.'] = true;
@@ -552,7 +584,6 @@ L['At what point should the text be displayed. Set to -1 to disable.'] = true;
 L['Attach Text to Power'] = true;
 L["Attach To"] = true;
 L['Aura Bars'] = true;
-L["Aura Spacing"] = true;
 L['Auto-Hide'] = true;
 L["Bad"] = true;
 L["Bars will transition smoothly."] = true;
@@ -653,7 +684,9 @@ L["Filled"] = true;
 L["Filter Type"] = true;
 L['Force Off'] = true;
 L['Force On'] = true;
+L['Force Reaction Color'] = true;
 L['Force the frames to show, they will act as if they are the player frame.'] = true;
+L['Forces reaction color instead of class color on units controlled by players.'] = true;
 L["Format"] = true;
 L["Frame"] = true;
 L["Frequent Updates"] = true;

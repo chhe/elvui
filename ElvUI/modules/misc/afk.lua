@@ -22,6 +22,7 @@ function AFK:SetAFK(status)
 	if(status) then
 		MoveViewLeftStart(CAMERA_SPEED);
 		self.AFKMode:Show()
+		CloseAllBags()
 		UIParent:Hide()
 
 		if(IsInGuild()) then
@@ -157,22 +158,22 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
 		playerLink = "|Hplayer:"..arg2..":"..arg11..":"..chatGroup..(chatTarget and ":"..chatTarget or "").."|h";
 	else
 		playerLink = "|HBNplayer:"..arg2..":"..arg13..":"..arg11..":"..chatGroup..(chatTarget and ":"..chatTarget or "").."|h";
-	end	
+	end
 
 	local message = arg1;
 	if ( arg14 ) then	--isMobile
 		message = ChatFrame_GetMobileEmbeddedTexture(info.r, info.g, info.b)..message;
 	end
-	body = format(_G["CHAT_"..type.."_GET"]..message, playerLink.."["..coloredName.."]".."|h");	
+	body = format(_G["CHAT_"..type.."_GET"]..message, playerLink.."["..coloredName.."]".."|h");
 
 	local accessID = ChatHistory_GetAccessID(chatGroup, chatTarget);
-	local typeID = ChatHistory_GetAccessID(type, chatTarget, arg12 == "" and arg13 or arg12);	
+	local typeID = ChatHistory_GetAccessID(type, chatTarget, arg12 == "" and arg13 or arg12);
 	if CH.db.shortChannels then
 		body = body:gsub("|Hchannel:(.-)|h%[(.-)%]|h", CH.ShortChannel)
 		body = body:gsub("^(.-|h) "..L['whispers'], "%1")
 		body = body:gsub("<"..AFKString..">", "[|cffFF0000"..L['AFK'].."|r] ")
 		body = body:gsub("<"..DND..">", "[|cffE7E716"..L['DND'].."|r] ")
-		body = body:gsub("%[BN_CONVERSATION:", '%['.."")			
+		body = body:gsub("%[BN_CONVERSATION:", '%['.."")
 	end
 
 	self:AddMessage(CH:ConcatenateTimeStamp(body), info.r, info.g, info.b, info.id, false, accessID, typeID);
@@ -253,7 +254,7 @@ function AFK:Initialize()
 	self.AFKMode.bottom.model:SetSize(800, 800)
 	self.AFKMode.bottom.model:SetCamDistanceScale(1.15)
 	self.AFKMode.bottom.model:SetFacing(6)
-	self.AFKMode.bottom.model:SetScript("OnUpdateModel", function(self) 
+	self.AFKMode.bottom.model:SetScript("OnUpdateModel", function(self)
 		local timePassed = GetTime() - self.startTime
 		if(timePassed > self.duration) and self.isIdle ~= true then
 			self:SetAnimation(0)
@@ -263,7 +264,7 @@ function AFK:Initialize()
 	end)
 
 	self:Toggle()
-	self.isActive = false	
+	self.isActive = false
 end
 
 

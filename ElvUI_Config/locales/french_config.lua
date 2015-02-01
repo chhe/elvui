@@ -14,6 +14,30 @@ L["PANEL_DESC"] = "Ajuste la largeur et la hauteur des fenêtres de chat, cela a
 L["SKINS_DESC"] = "Ajuste les paramètres d'habillage."
 L["TOGGLESKIN_DESC"] = "Active ou désactive l'habillage ElvUI des éléments ci-dessous."
 L["TOOLTIP_DESC"] = "Configuration des Infobulles."
+L["SEARCH_SYNTAX_DESC"] = [=[With the new addition of LibItemSearch, you now have access to much more advanced item searches. The following is a documentation of the search syntax. See the full explanation at: https://github.com/Jaliborc/LibItemSearch-1.2/wiki/Search-Syntax.
+
+Specific Searching:
+    • q:[quality] or quality:[quality]. For instance, q:epic will find all epic items.
+    • l:[level], lvl:[level] or level:[level]. For example, l:30 will find all items with level 30.
+    • t:[search], type:[search] or slot:[search]. For instance, t:weapon will find all weapons.
+    • n:[name] or name:[name]. For instance, typing n:muffins will find all items with names containing "muffins".
+    • s:[set] or set:[set]. For example, s:fire will find all items in equipment sets you have with names that start with fire.
+    • tt:[search], tip:[search] or tooltip:[search]. For instance, tt:binds will find all items that can be bound to account, on equip, or on pickup.
+
+	
+Search Operators:
+    • ! : Negates a search. For example, !q:epic will find all items that are NOT epic.
+    • | : Joins two searches. Typing q:epic | t:weapon will find all items that are either epic OR weapons.
+    • & : Intersects two searches. For instance, q:epic & t:weapon will find all items that are epic AND weapons
+    • >, <, <=, => : Performs comparisons on numerical searches. For example, typing lvl: >30 will find all items with level HIGHER than 30.
+
+
+The following search keywords can also be used:
+    • soulbound, bound, bop : Bind on pickup items.
+    • bou : Bind on use items.
+    • boe : Bind on equip items.
+    • boa : Bind on account items.
+    • quest : Quest bound items.]=];
 L['TEXT_FORMAT_DESC'] = [=[Entrer une séquence pour changer le format du texte.
 
 Exemples:
@@ -118,6 +142,7 @@ L['List of items to ignore when sorting. If you wish to add multiple items you m
 L['Money Format'] = "Format monétaire";
 L['Panel Width (Bags)'] = "Largeur du panneau (Sac)"
 L['Panel Width (Bank)'] = "Largeur du panneau (Banque)"
+L["Search Syntax"] = true;
 L["Set the size of your bag buttons."] = "Définissez la taille de vos boutons de sac."
 L['Short (Whole Numbers)'] = "Court (nombres entiers)";
 L['Short'] = "Cours";
@@ -301,11 +326,13 @@ L["Attempt to support eyefinity/nvidia surround."] = "Tente de supporter eyefini
 L['Auto Greed/DE'] = "Dez / Cupidité Auto"
 L["Auto Repair"] = "Réparation automatique"
 L["Auto Scale"] = "Échelle Automatique"
+L["Auto"] = true;
 L["Automatically accept invites from guild/friends."] = "Accepter automatiquement les invitations venant d'amis / joueurs de la Guilde."
 L["Automatically repair using the following method when visiting a merchant."] = "Répare automatiquement votre équipement chez le marchand selon le mode de réparation sélectionné."
 L["Automatically scale the User Interface based on your screen resolution"] = "Redimensionne automatiquement l'Interface Utilisateur en fonction de votre résolution d'écran."
 L['Automatically select greed or disenchant (when available) on green quality items. This will only work if you are the max level.'] = "Choisi automatiquement la cupidité ou le désenchantement (quand il est disponible) sur les objets inhabituels (vert). Ceci ne fonctionne que si vous êtes au niveau maximum."
 L["Automatically vendor gray items when visiting a vendor."] = "Vendre automatiquement les objets gris quand vous rendez visite à un marchand."
+L["Bonus Reward Position"] = true;
 L['Bottom Panel'] = "Bandeau en bas"
 L['Chat Bubbles Style'] = 'Style des bulles de discussion'
 L['Direction the bar moves on gains/losses'] = "Direction que prend la barre quand gain / perte";
@@ -317,6 +344,7 @@ L["Enable/Disable the loot frame."] = "Activer / désactiver le cadre de butin."
 L["Enable/Disable the loot roll frame."] = "Activer / désactiver le cadre du tirage au sort du butin."
 L['Enable/Disable the minimap. |cffFF0000Warning: This will prevent you from seeing the consolidated buffs bar, and prevent you from seeing the minimap datatexts.|r'] = "Activer / désactiver la minicarte. |cffFF0000Attention: Cela vous empêchera de voir la barre d'améliorations groupées et les textes d'informations sous la minicarte."
 L["General"] = "Général"
+L["Height of the objective tracker. Increase size to be able to see more objectives."] = true;
 L["Hide Error Text"] = "Cacher les textes d'erreurs"
 L["Hides the red error text at the top of the screen while in combat."] = "Cacher les textes d'erreurs en haut de l'écran en combat."
 L["Log Taints"] = "Journal  des corruptions"
@@ -326,6 +354,8 @@ L["Loot"] = "Butin"
 L["Make the world map smaller."] = true;
 L["Multi-Monitor Support"] = "Support Multi-Moniteur";
 L["Name Font"] = "Nom de la police"
+L["Objective Frame Height"] = true;
+L["Position of bonus quest reward frame relative to the objective tracker."] = true;
 L['Remove Backdrop'] = 'Supprimer le fond'
 L["Reset all frames to their original positions."] = "Réinitialiser les cadres à leurs positions initiales."
 L["Reset Anchors"] = "Réinitialiser les ancres"
@@ -497,6 +527,7 @@ L["Non-Raid Frame"] = "Info Raid"
 L["Pet Battle"] = "Combats de mascottes"
 L["Petition Frame"] = "Fenêtre de Charte"
 L["PvP Frames"] = "Fenêtre JcJ"
+L["Quest Choice"] = true;
 L["Quest Frames"] = "Fenêtre de Quête"
 L["Raid Frame"] = "Fenêtre de Raid"
 L["Reforge Frame"] = "Retouche"
@@ -521,6 +552,7 @@ L["Bags Only"] = "Sacs seulement";
 L["Bank Only"] = "Banque seulement";
 L["Both"] = "Les deux";
 L['Cursor Anchor'] = "Ancrage sur le curseur";
+L["Custom Faction Colors"] = true;
 L['Display guild ranks if a unit is guilded.'] = "Affiche le rang de la guilde si un joueur est guildé"
 L['Display how many of a certain item you have in your possession.'] = "Affiche combien vous avez d'objets de ce type en votre possession."
 L['Display player titles.'] = "Affiche le titre du joueur"
@@ -662,7 +694,9 @@ L["Filled"] = "Rempli"
 L["Filter Type"] = "Type de filtre"
 L['Force Off'] = 'Forcer Off'
 L['Force On'] = 'Forcer On'
+L['Force Reaction Color'] = true;
 L['Force the frames to show, they will act as if they are the player frame.'] = "Forcer l'affichage des cadres, ils agiront comme sur le cadre de joueur."
+L['Forces reaction color instead of class color on units controlled by players.'] = true;
 L["Format"] = "Format"
 L["Frame"] = "Fenêtre"
 L["Frequent Updates"] = "Mise à Jours fréquentes"

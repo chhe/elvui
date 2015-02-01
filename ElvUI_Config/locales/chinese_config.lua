@@ -14,6 +14,30 @@ L['PANEL_DESC'] = "调整左、右对话框的大小，此设定将会影响对�
 L["SKINS_DESC"] = "调整外观设定."
 L["TOGGLESKIN_DESC"] = "启用/停用此外观."
 L["TOOLTIP_DESC"] = "鼠标提示资讯设定选项."
+L["SEARCH_SYNTAX_DESC"] = [=[With the new addition of LibItemSearch, you now have access to much more advanced item searches. The following is a documentation of the search syntax. See the full explanation at: https://github.com/Jaliborc/LibItemSearch-1.2/wiki/Search-Syntax.
+
+Specific Searching:
+    • q:[quality] or quality:[quality]. For instance, q:epic will find all epic items.
+    • l:[level], lvl:[level] or level:[level]. For example, l:30 will find all items with level 30.
+    • t:[search], type:[search] or slot:[search]. For instance, t:weapon will find all weapons.
+    • n:[name] or name:[name]. For instance, typing n:muffins will find all items with names containing "muffins".
+    • s:[set] or set:[set]. For example, s:fire will find all items in equipment sets you have with names that start with fire.
+    • tt:[search], tip:[search] or tooltip:[search]. For instance, tt:binds will find all items that can be bound to account, on equip, or on pickup.
+
+	
+Search Operators:
+    • ! : Negates a search. For example, !q:epic will find all items that are NOT epic.
+    • | : Joins two searches. Typing q:epic | t:weapon will find all items that are either epic OR weapons.
+    • & : Intersects two searches. For instance, q:epic & t:weapon will find all items that are epic AND weapons
+    • >, <, <=, => : Performs comparisons on numerical searches. For example, typing lvl: >30 will find all items with level HIGHER than 30.
+
+
+The following search keywords can also be used:
+    • soulbound, bound, bop : Bind on pickup items.
+    • bou : Bind on use items.
+    • boe : Bind on equip items.
+    • boa : Bind on account items.
+    • quest : Quest bound items.]=];
 L['TEXT_FORMAT_DESC'] = [=[提供一个更改文字格式的方式
 
 例如:
@@ -118,6 +142,7 @@ L['List of items to ignore when sorting. If you wish to add multiple items you m
 L['Money Format'] = true;
 L['Panel Width (Bags)'] = '背包面板宽度'
 L['Panel Width (Bank)'] = '银行面板宽度'
+L["Search Syntax"] = true;
 L["Set the size of your bag buttons."] = "设置背包按钮尺寸."
 L['Short (Whole Numbers)'] = true;
 L['Short'] = true;
@@ -301,11 +326,13 @@ L["Attempt to support eyefinity/nvidia surround."] = true;
 L['Auto Greed/DE'] = "自动贪婪/分解"
 L["Auto Repair"] = "自动修装"
 L["Auto Scale"] = "自动缩放"
+L["Auto"] = true;
 L["Automatically accept invites from guild/friends."] = "自动接受工会或好友的邀请"
 L["Automatically repair using the following method when visiting a merchant."] = "使用以下方式来自动修理装备."
 L["Automatically scale the User Interface based on your screen resolution"] = "依据屏幕分辨率度自动缩放介面"
 L['Automatically select greed or disenchant (when available) on green quality items. This will only work if you are the max level.'] = "当你的等级达到满级时, 自动选择贪婪或分解绿色物品."
 L["Automatically vendor gray items when visiting a vendor."] = "当访问商人时自动出售灰色物品."
+L["Bonus Reward Position"] = true;
 L['Bottom Panel'] = "底部面板"
 L['Chat Bubbles Style'] = true;
 L['Direction the bar moves on gains/losses'] = true;
@@ -317,6 +344,7 @@ L["Enable/Disable the loot frame."] = "开/关物品掉落框架。"
 L["Enable/Disable the loot roll frame."] = "开/关掷骰子框架。"
 L['Enable/Disable the minimap. |cffFF0000Warning: This will prevent you from seeing the consolidated buffs bar, and prevent you from seeing the minimap datatexts.|r'] = "开/关小地图. |cffFF0000警告: 这将使你无法看见综合增益框和小地图资讯栏.|r"
 L["General"] = "一般"
+L["Height of the objective tracker. Increase size to be able to see more objectives."] = true;
 L["Hide Error Text"] = "隐藏错误文字"
 L["Hides the red error text at the top of the screen while in combat."] = "战斗中隐藏屏幕顶部红字错误信息."
 L["Log Taints"] = "错误记录"
@@ -326,6 +354,8 @@ L["Loot"] = "拾取"
 L["Make the world map smaller."] = true;
 L["Multi-Monitor Support"] = true;
 L["Name Font"] = "名称字体"
+L["Objective Frame Height"] = true;
+L["Position of bonus quest reward frame relative to the objective tracker."] = true;
 L['Remove Backdrop'] = "去除背景"
 L["Reset all frames to their original positions."] = "重设所有框架至预设位置."
 L["Reset Anchors"] = "重置定位"
@@ -497,6 +527,7 @@ L["Non-Raid Frame"] = "非团队框架"
 L["Pet Battle"] = "宠物战斗"
 L["Petition Frame"] = "回报GM"
 L["PvP Frames"] = "PvP框架"
+L["Quest Choice"] = true;
 L["Quest Frames"] = "任务"
 L["Raid Frame"] = "团队"
 L["Reforge Frame"] = "重铸"
@@ -521,6 +552,7 @@ L["Bags Only"] = true;
 L["Bank Only"] = true;
 L["Both"] = true;
 L['Cursor Anchor'] = true;
+L["Custom Faction Colors"] = true;
 L['Display guild ranks if a unit is guilded.'] = "当目标有公会时显示其在公会内的等级."
 L['Display how many of a certain item you have in your possession.'] = '显示当前物品在你身上的数量.'
 L['Display player titles.'] = "显示玩家头衔."
@@ -563,7 +595,6 @@ L['At what point should the text be displayed. Set to -1 to disable.'] = "在何
 L['Attach Text to Power'] = true;
 L["Attach To"] = "附加到"
 L['Aura Bars'] = "光环条"
-L["Aura Spacing"] = true;
 L['Auto-Hide'] = true;
 L["Bad"] = "危险"
 L["Bars will transition smoothly."] = "状态条平滑增减"
@@ -663,7 +694,9 @@ L["Filled"] = "全长"
 L["Filter Type"] = "过滤器类型"
 L['Force Off'] = "强制关闭"
 L['Force On'] = "强制开启"
+L['Force Reaction Color'] = true;
 L['Force the frames to show, they will act as if they are the player frame.'] = "强制框架显示."
+L['Forces reaction color instead of class color on units controlled by players.'] = true;
 L["Format"] = "格式"
 L["Frame"] = "框架"
 L["Frequent Updates"] = "频繁更新"
