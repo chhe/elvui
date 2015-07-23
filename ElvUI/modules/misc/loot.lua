@@ -169,7 +169,7 @@ function M:LOOT_OPENED(event, autoloot)
 	local items = GetNumLootItems()
 
 	if(IsFishingLoot()) then
-		lootFrame.title:SetText(L['Fishy Loot'])
+		lootFrame.title:SetText(L["Fishy Loot"])
 	elseif(not UnitIsFriend("player", "target") and UnitIsDead"target") then
 		lootFrame.title:SetText(UnitName("target"))
 	else
@@ -248,7 +248,7 @@ function M:LOOT_OPENED(event, autoloot)
 		local slot = lootFrame.slots[1] or createSlot(1)
 		local color = ITEM_QUALITY_COLORS[0]
 
-		slot.name:SetText(L['Empty Slot'])
+		slot.name:SetText(L["Empty Slot"])
 		if color then
 			slot.name:SetTextColor(color.r, color.g, color.b)
 		end
@@ -307,18 +307,6 @@ function M:LoadLoot()
 	-- Fuzz
 	LootFrame:UnregisterAllEvents()
 	tinsert(UISpecialFrames, 'ElvLootFrame')
-
-	function _G.GroupLootDropDown_GiveLoot(self)
-		if ( sq >= MASTER_LOOT_THREHOLD ) then
-			local dialog = E:StaticPopup_Show("CONFIRM_LOOT_DISTRIBUTION", ITEM_QUALITY_COLORS[sq].hex..sn..FONT_COLOR_CODE_CLOSE, self:GetText())
-			if (dialog) then
-				dialog.data = self.value
-			end
-		else
-			GiveMasterLoot(ss, self.value)
-		end
-		CloseDropDownMenus()
-	end
 
 	E.PopupDialogs["CONFIRM_LOOT_DISTRIBUTION"].OnAccept = function(self, data)
 		GiveMasterLoot(ss, data)

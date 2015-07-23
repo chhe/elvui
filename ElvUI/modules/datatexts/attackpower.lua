@@ -3,7 +3,7 @@ local DT = E:GetModule('DataTexts')
 
 local join = string.join
 local base, posBuff, negBuff, effective, Rbase, RposBuff, RnegBuff, Reffective, pwr
-local displayModifierString = ''
+local displayNumberString = ''
 local lastPanel;
 
 local function OnEvent(self, event, unit)
@@ -17,7 +17,7 @@ local function OnEvent(self, event, unit)
 		pwr = effective
 	end
 
-	self.text:SetFormattedText(displayNumberString, L['AP'], pwr)
+	self.text:SetFormattedText(displayNumberString, L["AP"], pwr)
 	lastPanel = self
 end
 

@@ -152,8 +152,6 @@ local function SetTemplate(f, t, glossTex, ignoreUpdates)
 	if not ignoreUpdates then
 		E["frames"][f] = true
 	end
-
-	frame = nil;
 end
 
 local function CreateBackdrop(f, t, tex)
@@ -235,7 +233,7 @@ local function FontTemplate(fs, font, fontSize, fontStyle)
 	end
 
 	fs:SetFont(font, fontSize, fontStyle)
-	if fontStyle then
+	if fontStyle and (fontStyle ~= "NONE") then
 		fs:SetShadowColor(0, 0, 0, 0.2)
 	else
 		fs:SetShadowColor(0, 0, 0, 1)
@@ -245,9 +243,9 @@ local function FontTemplate(fs, font, fontSize, fontStyle)
 	E["texts"][fs] = true
 end
 
-local function StyleButton(button, noHover, noPushed, noChecked, noCD)
+local function StyleButton(button, noHover, noPushed, noChecked)
 	if button.SetHighlightTexture and not button.hover and not noHover then
-		local hover = button:CreateTexture("frame", nil, self)
+		local hover = button:CreateTexture()
 		hover:SetTexture(1, 1, 1, 0.3)
 		hover:SetInside()
 		button.hover = hover
@@ -255,7 +253,7 @@ local function StyleButton(button, noHover, noPushed, noChecked, noCD)
 	end
 
 	if button.SetPushedTexture and not button.pushed and not noPushed then
-		local pushed = button:CreateTexture("frame", nil, self)
+		local pushed = button:CreateTexture()
 		pushed:SetTexture(0.9, 0.8, 0.1, 0.3)
 		pushed:SetInside()
 		button.pushed = pushed
@@ -263,7 +261,7 @@ local function StyleButton(button, noHover, noPushed, noChecked, noCD)
 	end
 
 	if button.SetCheckedTexture and not button.checked and not noChecked then
-		local checked = button:CreateTexture("frame", nil, self)
+		local checked = button:CreateTexture()
 		checked:SetTexture(1, 1, 1)
 		checked:SetInside()
 		checked:SetAlpha(0.3)
@@ -276,7 +274,7 @@ local function StyleButton(button, noHover, noPushed, noChecked, noCD)
 		cooldown:ClearAllPoints()
 		cooldown:SetInside()
 		cooldown:SetDrawEdge(false)
-		if not noCD then cooldown:SetSwipeColor(0, 0, 0, 1) end
+		cooldown:SetSwipeColor(0, 0, 0, 1)
 	end
 end
 

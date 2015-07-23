@@ -2,7 +2,7 @@ local E, L, V, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, Private
 local DT = E:GetModule('DataTexts')
 
 local spellpwr, healpwr
-local displayModifierString = ''
+local displayNumberString = ''
 local lastPanel;
 local join = string.join
 
@@ -11,9 +11,9 @@ local function OnEvent(self, event, unit)
 	healpwr = GetSpellBonusHealing()
 
 	if healpwr > spellpwr then
-		self.text:SetFormattedText(displayNumberString, L['HP'], healpwr)
+		self.text:SetFormattedText(displayNumberString, L["HP"], healpwr)
 	else
-		self.text:SetFormattedText(displayNumberString, L['SP'], spellpwr)
+		self.text:SetFormattedText(displayNumberString, L["SP"], spellpwr)
 	end
 
 	lastPanel = self

@@ -80,7 +80,7 @@ local function LoadSkin()
 	}
 
 	for _, button in pairs(buttons) do
-		S:HandleButton(_G[button])
+		S:HandleButton(_G[button], true)
 	end
 
 	--Fix Button Positions
@@ -96,10 +96,15 @@ local function LoadSkin()
 	--BrowseResetButton:Point("TOPLEFT", AuctionFrameBrowse, "TOPLEFT", 81, -74)
 	--BrowseSearchButton:Point("TOPRIGHT", AuctionFrameBrowse, "TOPRIGHT", 25, -34)
 
-	AuctionsItemButton:SetScript("OnUpdate", function()
-		if AuctionsItemButton:GetNormalTexture() then
-			AuctionsItemButton:GetNormalTexture():SetTexCoord(unpack(E.TexCoords))
-			AuctionsItemButton:GetNormalTexture():SetInside()
+	AuctionsItemButton:HookScript('OnEvent', function(self, event, ...)
+		self:SetBackdropBorderColor(unpack(E["media"].bordercolor))
+		if event == 'NEW_AUCTION_UPDATE' and self:GetNormalTexture() then
+			local Quality = select(4, GetAuctionSellItemInfo())
+			self:GetNormalTexture():SetTexCoord(unpack(E.TexCoords))
+			self:GetNormalTexture():SetInside()
+			if Quality and Quality > 1 and BAG_ITEM_QUALITY_COLORS[Quality] then
+				self:SetBackdropBorderColor(BAG_ITEM_QUALITY_COLORS[Quality].r, BAG_ITEM_QUALITY_COLORS[Quality].g, BAG_ITEM_QUALITY_COLORS[Quality].b)
+			end
 		end
 	end)
 
@@ -130,11 +135,12 @@ local function LoadSkin()
 	for i=1, AuctionFrame.numTabs do
 		S:HandleTab(_G["AuctionFrameTab"..i])
 	end
-
+	
 	for i=1, NUM_FILTERS_TO_DISPLAY do
 		local tab = _G["AuctionFilterButton"..i]
-		tab:StripTextures()
 		tab:StyleButton()
+		_G["AuctionFilterButton"..i..'NormalTexture']:SetAlpha(0)
+		_G["AuctionFilterButton"..i..'NormalTexture'].SetAlpha = E.noop
 	end
 
 	local editboxs = {
@@ -177,11 +183,15 @@ local function LoadSkin()
 
 		if icon then
 			icon:StyleButton()
-			--TODO: Find a better method to ensure that the icon:GetNormalTexture doesn't return after clicking
-			icon:HookScript("OnUpdate", function() icon:GetNormalTexture():Kill() end)
-
-			icon:CreateBackdrop("Default")
-			icon.backdrop:SetAllPoints()
+			icon:GetNormalTexture():SetTexture('')
+			icon:SetTemplate("Default")
+			icon.IconBorder:SetTexture('')
+			hooksecurefunc(icon.IconBorder, 'SetVertexColor', function(self, r, g, b)
+				icon:SetBackdropBorderColor(r, g, b)
+			end)
+			hooksecurefunc(icon.IconBorder, 'Hide', function(self, r, g, b)
+				icon:SetBackdropBorderColor(unpack(E["media"].bordercolor))
+			end)
 		end
 
 		if button then
@@ -200,20 +210,18 @@ local function LoadSkin()
 		local icon = _G["AuctionsButton"..i.."Item"]
 
 		_G["AuctionsButton"..i.."ItemIconTexture"]:SetTexCoord(unpack(E.TexCoords))
-		hooksecurefunc(_G["AuctionsButton"..i.."ItemIconTexture"], "SetTexCoord", function(self, x1, y1, x2, y2)
-			local x3, y3, x4, y4 = unpack(E.TexCoords)
-			if x1 ~= x3 or y1 ~= y3 or x2 ~= x4 or y2 ~= y4 then
-				self:SetTexCoord(unpack(E.TexCoords))
-			end
-		end)
 		_G["AuctionsButton"..i.."ItemIconTexture"]:SetInside()
 
 		icon:StyleButton()
-		--TODO: Find a better method to ensure that the icon:GetNormalTexture doesn't return after clicking
-		icon:HookScript("OnUpdate", function() icon:GetNormalTexture():Kill() end)
-
-		icon:CreateBackdrop("Default")
-		icon.backdrop:SetAllPoints()
+		icon:GetNormalTexture():SetTexture('')
+		icon:SetTemplate("Default")
+		icon.IconBorder:SetTexture('')
+		hooksecurefunc(icon.IconBorder, 'SetVertexColor', function(self, r, g, b)
+			icon:SetBackdropBorderColor(r, g, b)
+		end)
+		hooksecurefunc(icon.IconBorder, 'Hide', function(self, r, g, b)
+			icon:SetBackdropBorderColor(unpack(E["media"].bordercolor))
+		end)
 
 		button:StripTextures()
 		button:StyleButton()
@@ -232,10 +240,15 @@ local function LoadSkin()
 		_G["BidButton"..i.."ItemIconTexture"]:SetInside()
 
 		icon:StyleButton()
-		icon:HookScript("OnUpdate", function() icon:GetNormalTexture():Kill() end)
-
-		icon:CreateBackdrop("Default")
-		icon.backdrop:SetAllPoints()
+		icon:GetNormalTexture():SetTexture('')
+		icon:SetTemplate("Default")
+		icon.IconBorder:SetTexture('')
+		hooksecurefunc(icon.IconBorder, 'SetVertexColor', function(self, r, g, b)
+			icon:SetBackdropBorderColor(r, g, b)
+		end)
+		hooksecurefunc(icon.IconBorder, 'Hide', function(self, r, g, b)
+			icon:SetBackdropBorderColor(unpack(E["media"].bordercolor))
+		end)
 
 		button:StripTextures()
 		button:StyleButton()
@@ -289,6 +302,40 @@ local function LoadSkin()
 	AuctionFrameAuctions.bg2:Point("TOPLEFT", AuctionFrameAuctions.bg1, "TOPRIGHT", 3, 0)
 	AuctionFrameAuctions.bg2:Point("BOTTOMRIGHT", AuctionFrame, -8, 35)
 	AuctionFrameAuctions.bg2:SetFrameLevel(AuctionFrameAuctions.bg2:GetFrameLevel() - 2)
+	
+	--WoW Token Category
+	S:HandleButton(BrowseWowTokenResults.Buyout)
+	BrowseWowTokenResultsToken:CreateBackdrop("Default")
+	BrowseWowTokenResultsTokenIconTexture:SetTexCoord(unpack(E.TexCoords))
+	BrowseWowTokenResultsToken.backdrop:SetOutside(BrowseWowTokenResultsTokenIconTexture)
+	BrowseWowTokenResultsToken.backdrop:SetBackdropBorderColor(BrowseWowTokenResultsToken.IconBorder:GetVertexColor())
+	BrowseWowTokenResultsToken.backdrop:SetFrameLevel(BrowseWowTokenResultsToken:GetFrameLevel())
+	BrowseWowTokenResultsToken.IconBorder:SetTexture(nil)
+	BrowseWowTokenResultsToken.ItemBorder:SetTexture(nil)
+	
+	--WoW Token Tutorial Frame
+	WowTokenGameTimeTutorial:CreateBackdrop("Transparent")
+	S:HandleCloseButton(WowTokenGameTimeTutorial.CloseButton)
+	S:HandleButton(StoreButton)
+	WowTokenGameTimeTutorial.Inset.InsetBorderBottom:SetAlpha(0)
+	WowTokenGameTimeTutorial.Inset.InsetBorderRight:SetAlpha(0)
+	WowTokenGameTimeTutorial.Inset.InsetBorderBottomLeft:SetAlpha(0)
+	WowTokenGameTimeTutorial.Inset.InsetBorderBottomRight:SetAlpha(0)
+	WowTokenGameTimeTutorial.Inset.InsetBorderTopLeft:SetAlpha(0)
+	WowTokenGameTimeTutorial.Inset.InsetBorderLeft:SetAlpha(0)
+	WowTokenGameTimeTutorial.Inset.InsetBorderTopRight:SetAlpha(0)
+	WowTokenGameTimeTutorial.Inset.InsetBorderTop:SetAlpha(0)
+	WowTokenGameTimeTutorial.Inset.Bg:SetAlpha(0)
+	WowTokenGameTimeTutorialTitleBg:SetAlpha(0)
+	WowTokenGameTimeTutorialBg:SetAlpha(0)
+	WowTokenGameTimeTutorialTopRightCorner:SetAlpha(0)
+	WowTokenGameTimeTutorialTopLeftCorner:SetAlpha(0)
+	WowTokenGameTimeTutorialTopBorder:SetAlpha(0)
+	WowTokenGameTimeTutorialBotLeftCorner:SetAlpha(0)
+	WowTokenGameTimeTutorialBotRightCorner:SetAlpha(0)
+	WowTokenGameTimeTutorialBottomBorder:SetAlpha(0)
+	WowTokenGameTimeTutorialLeftBorder:SetAlpha(0)
+	WowTokenGameTimeTutorialRightBorder:SetAlpha(0)
 end
 
 S:RegisterSkin("Blizzard_AuctionUI", LoadSkin)

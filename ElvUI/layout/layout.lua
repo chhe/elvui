@@ -70,7 +70,7 @@ local function ChatButton_OnEnter(self, ...)
 
 	GameTooltip:SetOwner(self, 'ANCHOR_TOPLEFT', 0, 4)
 	GameTooltip:ClearLines()
-	GameTooltip:AddDoubleLine(L['Left Click:'], L['Toggle Chat Frame'], 1, 1, 1)
+	GameTooltip:AddDoubleLine(L["Left Click:"], L["Toggle Chat Frame"], 1, 1, 1)
 	GameTooltip:Show()
 end
 
@@ -274,7 +274,7 @@ function LO:CreateChatPanels()
 	rchat:SetFrameStrata('BACKGROUND')
 	rchat:Size(E.db.chat.separateSizes and E.db.chat.panelWidthRight or E.db.chat.panelWidth, E.db.chat.separateSizes and E.db.chat.panelHeightRight or E.db.chat.panelHeight)
 	rchat:Point('BOTTOMRIGHT', E.UIParent, -4, 4)
-	rchat:SetFrameLevel(lchat:GetFrameLevel() + 2)
+	rchat:SetFrameLevel(rchat:GetFrameLevel() + 2)
 	rchat:CreateBackdrop('Transparent')
 	rchat.backdrop:SetAllPoints()
 	E:CreateMover(rchat, "RightChatMover", L["Right Chat"])
@@ -376,10 +376,10 @@ function LO:CreateMinimapPanels()
 	configtoggle:SetScript('OnEnter', function(self)
 		GameTooltip:SetOwner(self, 'ANCHOR_BOTTOMRIGHT', 0, -4)
 		GameTooltip:ClearLines()
-		GameTooltip:AddDoubleLine(L['Left Click:'], L['Toggle Configuration'], 1, 1, 1)
+		GameTooltip:AddDoubleLine(L["Left Click:"], L["Toggle Configuration"], 1, 1, 1)
 
 		if E.db.datatexts.battleground then
-			GameTooltip:AddDoubleLine(L['Right Click:'], L['Show BG Texts'], 1, 1, 1)
+			GameTooltip:AddDoubleLine(L["Right Click:"], L["Show BG Texts"], 1, 1, 1)
 		end
 		GameTooltip:Show()
 	end)

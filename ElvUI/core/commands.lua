@@ -64,7 +64,7 @@ function E:BGStats()
 	DT.ForceHideBGStats = nil;
 	DT:LoadDataTexts()
 
-	E:Print(L['Battleground datatexts will now show again if you are inside a battleground.'])
+	E:Print(L["Battleground datatexts will now show again if you are inside a battleground."])
 end
 
 local function OnCallback(command)
@@ -146,21 +146,92 @@ function E:GetCPUImpact()
 	end
 end
 
+function E:HelloKittyToggle()
+	if(HelloKittyLeft and HelloKittyLeft:IsShown()) then
+		self:RestoreHelloKitty()
+	else
+		self:StaticPopup_Show("HELLO_KITTY")
+	end
+end
+
+function E:HarlemShakeToggle()
+	self:StaticPopup_Show("HARLEM_SHAKE");
+end
+
+local BLIZZARD_ADDONS = {
+    "Blizzard_AchievementUI",
+    "Blizzard_ArchaeologyUI",
+    "Blizzard_ArenaUI",
+    "Blizzard_AuctionUI",
+    "Blizzard_AuthChallengeUI",
+    "Blizzard_BarbershopUI",
+    "Blizzard_BattlefieldMinimap",
+    "Blizzard_BindingUI",
+    "Blizzard_BlackMarketUI",
+    "Blizzard_Calendar",
+    "Blizzard_ChallengesUI",
+    "Blizzard_ClientSavedVariables",
+    "Blizzard_CombatLog",
+    "Blizzard_CombatText",
+    "Blizzard_CompactRaidFrames",
+    "Blizzard_CUFProfiles",
+    "Blizzard_DebugTools",
+    "Blizzard_EncounterJournal",
+    "Blizzard_GarrisonUI",
+    "Blizzard_GlyphUI",
+    "Blizzard_GMChatUI",
+    "Blizzard_GMSurveyUI",
+    "Blizzard_GuildBankUI",
+    "Blizzard_GuildControlUI",
+    "Blizzard_GuildUI",
+    "Blizzard_InspectUI",
+    "Blizzard_ItemAlterationUI",
+    "Blizzard_ItemSocketingUI",
+    "Blizzard_ItemUpgradeUI",
+    "Blizzard_LookingForGuildUI",
+    "Blizzard_MacroUI",
+    "Blizzard_MovePad",
+    "Blizzard_ObjectiveTracker",
+    "Blizzard_PetBattleUI",
+    "Blizzard_PetJournal",
+    "Blizzard_PVPUI",
+    "Blizzard_QuestChoice",
+    "Blizzard_RaidUI",
+    "Blizzard_StoreUI",
+    "Blizzard_TalentUI",
+    "Blizzard_TimeManager",
+    "Blizzard_TokenUI",
+    "Blizzard_TradeSkillUI",
+    "Blizzard_TrainerUI",
+    "Blizzard_VoidStorageUI",
+}
+function E:EnableBlizzardAddOns()
+	for _, addon in pairs(BLIZZARD_ADDONS) do
+		local reason = select(5, GetAddOnInfo(addon))
+		if reason == "DISABLED" then
+			EnableAddOn(addon)
+			E:Print("The following addon was re-enabled: "..addon)
+		end
+	end
+end
+
 function E:LoadCommands()
 	self:RegisterChatCommand("in", "DelayScriptCall")
 	self:RegisterChatCommand("ec", "ToggleConfig")
 	self:RegisterChatCommand("elvui", "ToggleConfig")
-
 	self:RegisterChatCommand('cpuimpact', 'GetCPUImpact')
 	self:RegisterChatCommand('cpuusage', 'GetTopCPUFunc')
 	self:RegisterChatCommand('bgstats', 'BGStats')
-	self:RegisterChatCommand('aprilfools', 'AprilFoolsToggle')
+	self:RegisterChatCommand('hellokitty', 'HelloKittyToggle')
+	self:RegisterChatCommand('hellokittyfix', 'HelloKittyFix')
+	self:RegisterChatCommand('harlemshake', 'HarlemShakeToggle')
 	self:RegisterChatCommand('luaerror', 'LuaError')
 	self:RegisterChatCommand('egrid', 'Grid')
 	self:RegisterChatCommand("moveui", "ToggleConfigMode")
 	self:RegisterChatCommand("resetui", "ResetUI")
 	self:RegisterChatCommand('farmmode', 'FarmMode')
 	self:RegisterChatCommand('cleanguild', 'MassGuildKick')
+	self:RegisterChatCommand('enableblizzard', 'EnableBlizzardAddOns')
 	if E.ActionBars then
 		self:RegisterChatCommand('kb', E.ActionBars.ActivateBindMode)
 	end

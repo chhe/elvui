@@ -25,6 +25,7 @@ local function LoadSkin()
 		"ReadyCheckFrame",
 		"StackSplitFrame",
 		"QueueStatusFrame",
+		"LFDReadyCheckPopup",
 	}
 
 	QueueStatusFrame:StripTextures()
@@ -186,6 +187,8 @@ local function LoadSkin()
 			S:HandleButton(ElvuiButtons)
 		end
 	end
+	S:HandleButton(LFDReadyCheckPopup.YesButton)
+	S:HandleButton(LFDReadyCheckPopup.NoButton)
 
 	-- if a button position is not really where we want, we move it here
 	VideoOptionsFrameCancel:ClearAllPoints()
@@ -205,9 +208,14 @@ local function LoadSkin()
 	ReadyCheckFrameText:SetPoint("TOP", 0, -12)
 
 	-- others
-	ReadyCheckListenerFrame:SetAlpha(0)
-	ReadyCheckFrame:HookScript("OnShow", function(self) if UnitIsUnit("player", self.initiator) then self:Hide() end end) -- bug fix, don't show it if initiator
 	StackSplitFrame:GetRegions():Hide()
+	ReadyCheckListenerFrame:SetAlpha(0)
+	ReadyCheckFrame:HookScript("OnShow", function(self)
+		-- bug fix, don't show it if player is initiator
+		if self.initiator and UnitIsUnit("player", self.initiator) then
+			self:Hide()
+		end
+	end)
 
 
 	RolePollPopup:SetTemplate("Transparent")
@@ -728,6 +736,7 @@ local function LoadSkin()
         "SocialPanelGuildMemberAlert",
         "SocialPanelChatMouseScroll",
 		"SocialPanelEnableTwitter",
+		"SocialPanelWholeChatWindowClickable",
         -- Action bars
         "ActionBarsPanelLockActionBars",
         "ActionBarsPanelSecureAbilityToggle",
@@ -799,6 +808,7 @@ local function LoadSkin()
         "MousePanelInvertMouse",
         "MousePanelClickToMove",
         "MousePanelWoWMouse",
+		"MousePanelEnableMouseSpeed",
         -- Help
         "HelpPanelShowTutorials",
         "HelpPanelEnhancedTooltips",
@@ -822,11 +832,11 @@ local function LoadSkin()
         "UnitFramePanelArenaEnemyCastBar",
         "UnitFramePanelArenaEnemyPets",
         "UnitFramePanelFullSizeFocusFrame",
-		
+
 		--Assessability
 		"AccessibilityPanelMovePad",
 		"AccessibilityPanelColorblindMode",
-		
+
 		--Watev
 		"NamesPanelUnitNameplatesNameplateClassColors",
     }
@@ -873,10 +883,10 @@ local function LoadSkin()
         "LanguagesPanelLocaleDropDown",
         -- Status Text
         "StatusTextPanelDisplayDropDown",
-		
+
 		--Assess-ability
 		"AccessibilityPanelColorFilterDropDown",
-		
+
 		--Locales
 		"InterfaceOptionsLanguagesPanelAudioLocaleDropDown",
     }
@@ -921,7 +931,7 @@ local function LoadSkin()
         "AudioOptionsVoicePanelPushToTalkSound",
 		"AudioOptionsSoundPanelPetBattleMusic",
 		"AudioOptionsSoundPanelDialogSounds",
-		
+
         -- Network
         "NetworkOptionsPanelOptimizeSpeed",
         "NetworkOptionsPanelUseIPv6",
@@ -982,7 +992,7 @@ local function LoadSkin()
 		"Advanced_PostProcessAntiAliasingDropDown",
 		"Advanced_ResampleQualityDropDown",
 		"Advanced_MultisampleAntiAliasingDropDown",
-		
+
         -- Audio
         "AudioOptionsSoundPanelHardwareDropDown",
         "AudioOptionsSoundPanelSoundChannelsDropDown",
@@ -1154,7 +1164,29 @@ local function LoadSkin()
 
 	for i=1, MAX_ADDONS_DISPLAYED do
 		S:HandleCheckBox(_G["AddonListEntry"..i.."Enabled"])
+		S:HandleButton(_G["AddonListEntry"..i].LoadAddonButton)
 	end
+	
+	--What's New
+	SplashFrame:CreateBackdrop("Transparent")
+	S:HandleButton(SplashFrame.BottomCloseButton)
+	S:HandleCloseButton(SplashFrame.TopCloseButton)
+
+	--NavBar Buttons (Used in WorldMapFrame, EncounterJournal and HelpFrame)
+	local function SkinNavBarButtons(self)
+		if (self:GetParent():GetName() == "EncounterJournal" and not E.private.skins.blizzard.encounterjournal) or (self:GetParent():GetName() == "WorldMapFrame" and not E.private.skins.blizzard.worldmap) or (self:GetParent():GetName() == "HelpFrameKnowledgebase" and not E.private.skins.blizzard.help) then
+			return
+		end
+		local navButton = self.navList[#self.navList]
+		if navButton and not navButton.isSkinned then
+			S:HandleButton(navButton, true)
+			if navButton.MenuArrowButton then
+				S:HandleNextPrevButton(navButton.MenuArrowButton, true)
+			end
+			navButton.isSkinned = true
+		end
+	end
+	hooksecurefunc("NavBar_AddButton", SkinNavBarButtons)
 end
 
 S:RegisterSkin('ElvUI', LoadSkin)

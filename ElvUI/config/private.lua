@@ -10,6 +10,8 @@ V['general'] = {
 	["dmgfont"] = "ElvUI Combat",
 	["namefont"] = "ElvUI Font",
 	['chatBubbles'] = 'backdrop',
+	['chatBubbleFont'] = "ElvUI Font",
+	['chatBubbleFontSize'] = 14,
 	['pixelPerfect'] = true,
 	['lfrEnhancement'] = true,
 	['replaceBlizzFonts'] = true,
@@ -45,6 +47,7 @@ V['skins'] = {
 	},
 	['blizzard'] = {
 		['enable'] = true,
+		["deathRecap"] = true,
 		["bags"] = true,
 		["bmah"] = true, --black market ah
 		["reforge"] = true,
@@ -110,7 +113,15 @@ V['tooltip'] = {
 
 V['unitframe'] = {
 	['enable'] = true,
-	['disableBlizzard'] = true,
+	['disabledBlizzardFrames'] = {
+		['player'] = true,
+		['target'] = true,
+		['focus'] = true,
+		['boss'] = true,
+		['arena'] = true,
+		['party'] = true,
+		['raid'] = true,
+	},
 }
 
 V["actionbar"] = {
