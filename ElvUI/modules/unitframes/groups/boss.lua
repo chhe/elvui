@@ -9,7 +9,7 @@ local BossHeader = CreateFrame('Frame', 'BossHeader', UIParent)
 function UF:Construct_BossFrames(frame)
 	frame.Health = self:Construct_HealthBar(frame, true, true, 'RIGHT')
 
-	frame.Power = self:Construct_PowerBar(frame, true, true, 'LEFT', false)
+	frame.Power = self:Construct_PowerBar(frame, true, true, 'LEFT')
 
 	frame.Name = self:Construct_NameText(frame)
 
@@ -322,6 +322,12 @@ function UF:Update_BossFrames(frame, db)
 		buffs["growth-x"] = db.buffs.anchorPoint == 'LEFT' and 'LEFT' or  db.buffs.anchorPoint == 'RIGHT' and 'RIGHT' or (db.buffs.anchorPoint:find('LEFT') and 'RIGHT' or 'LEFT')
 		buffs.initialAnchor = E.InversePoints[db.buffs.anchorPoint]
 
+		buffs.attachTo = attachTo
+		buffs.point = E.InversePoints[db.buffs.anchorPoint]
+		buffs.anchorPoint = db.buffs.anchorPoint
+		buffs.xOffset = x + db.buffs.xOffset
+		buffs.yOffset = y + db.buffs.yOffset + (E.PixelMode and (db.buffs.anchorPoint:find('TOP') and -1 or 1) or 0)
+
 		if db.buffs.enable then
 			buffs:Show()
 			UF:UpdateAuraIconSettings(buffs)
@@ -358,11 +364,41 @@ function UF:Update_BossFrames(frame, db)
 		debuffs["growth-x"] = db.debuffs.anchorPoint == 'LEFT' and 'LEFT' or  db.debuffs.anchorPoint == 'RIGHT' and 'RIGHT' or (db.debuffs.anchorPoint:find('LEFT') and 'RIGHT' or 'LEFT')
 		debuffs.initialAnchor = E.InversePoints[db.debuffs.anchorPoint]
 
+		debuffs.attachTo = attachTo
+		debuffs.point = E.InversePoints[db.debuffs.anchorPoint]
+		debuffs.anchorPoint = db.debuffs.anchorPoint
+		debuffs.xOffset = x + db.debuffs.xOffset
+		debuffs.yOffset = y + db.debuffs.yOffset
+
 		if db.debuffs.enable then
 			debuffs:Show()
 			UF:UpdateAuraIconSettings(debuffs)
 		else
 			debuffs:Hide()
+		end
+	end
+
+	--Smart Aura Position
+	do
+		local position = db.smartAuraPosition
+
+		if position == "BUFFS_ON_DEBUFFS" then
+			if db.debuffs.attachTo == "BUFFS" then
+				E:Print(format(L["This setting caused a conflicting anchor point, where %s would be attached to itself. Please check your anchor points. Setting '%s' to be attached to '%s'."], L["Buffs"], L["Debuffs"], L["Frame"]))
+				db.debuffs.attachTo = "FRAME"
+			end
+			frame.Buffs.PostUpdate = nil
+			frame.Debuffs.PostUpdate = UF.UpdateBuffsHeaderPosition
+		elseif position == "DEBUFFS_ON_BUFFS" then
+			if db.buffs.attachTo == "DEBUFFS" then
+				E:Print(format(L["This setting caused a conflicting anchor point, where '%s' would be attached to itself. Please check your anchor points. Setting '%s' to be attached to '%s'."], L["Debuffs"], L["Buffs"], L["Frame"]))
+				db.buffs.attachTo = "FRAME"
+			end
+			frame.Buffs.PostUpdate = UF.UpdateDebuffsHeaderPosition
+			frame.Debuffs.PostUpdate = nil
+		else
+			frame.Buffs.PostUpdate = nil
+			frame.Debuffs.PostUpdate = nil
 		end
 	end
 
@@ -517,21 +553,33 @@ function UF:Update_BossFrames(frame, db)
 	frame:ClearAllPoints()
 	if INDEX == 1 then
 		if db.growthDirection == 'UP' then
-			frame:Point('BOTTOMRIGHT', BossHeaderMover, 'BOTTOMRIGHT') --Set to default position
-		else
-			frame:Point('TOPRIGHT', BossHeaderMover, 'TOPRIGHT') --Set to default position
+			frame:SetPoint('BOTTOMRIGHT', BossHeaderMover, 'BOTTOMRIGHT')
+		elseif db.growthDirection == 'RIGHT' then
+			frame:SetPoint('LEFT', BossHeaderMover, 'LEFT')
+		elseif db.growthDirection == 'LEFT' then
+			frame:SetPoint('RIGHT', BossHeaderMover, 'RIGHT')
+		else --Down
+			frame:SetPoint('TOPRIGHT', BossHeaderMover, 'TOPRIGHT')
 		end
 	else
 		if db.growthDirection == 'UP' then
-			frame:Point('BOTTOMRIGHT', _G['ElvUF_Boss'..INDEX-1], 'TOPRIGHT', 0, 12 + db.castbar.height)
-		else
-			frame:Point('TOPRIGHT', _G['ElvUF_Boss'..INDEX-1], 'BOTTOMRIGHT', 0, -(12 + db.castbar.height))
+			frame:SetPoint('BOTTOMRIGHT', _G['ElvUF_Boss'..INDEX-1], 'TOPRIGHT', 0, db.spacing)
+		elseif db.growthDirection == 'RIGHT' then
+			frame:SetPoint('LEFT', _G['ElvUF_Boss'..INDEX-1], 'RIGHT', db.spacing, 0)
+		elseif db.growthDirection == 'LEFT' then
+			frame:SetPoint('RIGHT', _G['ElvUF_Boss'..INDEX-1], 'LEFT', -db.spacing, 0)
+		else --Down
+			frame:SetPoint('TOPRIGHT', _G['ElvUF_Boss'..INDEX-1], 'BOTTOMRIGHT', 0, -db.spacing)
 		end
 	end
-
-	BossHeader:Width(UNIT_WIDTH)
-	BossHeader:Height(UNIT_HEIGHT + (UNIT_HEIGHT + 12 + db.castbar.height) * 3)
-
+	
+	if db.growthDirection == 'UP' or db.growthDirection == 'DOWN' then
+		BossHeader:SetWidth(UNIT_WIDTH)
+		BossHeader:SetHeight(UNIT_HEIGHT + ((UNIT_HEIGHT + db.spacing) * (MAX_BOSS_FRAMES -1)))
+	elseif db.growthDirection == 'LEFT' or db.growthDirection == 'RIGHT' then
+		BossHeader:SetWidth(UNIT_WIDTH + ((UNIT_WIDTH + db.spacing) * (MAX_BOSS_FRAMES -1)))
+		BossHeader:SetHeight(UNIT_HEIGHT)
+	end
 
 	if UF.db.colors.transparentHealth then
 		UF:ToggleTransparentStatusBar(true, frame.Health, frame.Health.bg)

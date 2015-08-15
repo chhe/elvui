@@ -1,5 +1,6 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local S = E:GetModule('Skins')
+local LBG = LibStub("LibButtonGlow-1.0", true)
 
 local lower = string.lower
 
@@ -61,10 +62,10 @@ local function LoadSkin()
 	LFDQueueFrameRoleButtonDPSIncentiveIcon:SetAlpha(0)
 
 	local function OnShow(self)
-		ActionButton_ShowOverlayGlow(self:GetParent().checkButton)
+		LBG.ShowOverlayGlow(self:GetParent().checkButton)
 	end
 	local function OnHide(self)
-		ActionButton_HideOverlayGlow(self:GetParent().checkButton)
+		LBG.HideOverlayGlow(self:GetParent().checkButton)
 	end
 	LFDQueueFrameRoleButtonTankIncentiveIcon:HookScript("OnShow", OnShow)
 	LFDQueueFrameRoleButtonHealerIncentiveIcon:HookScript("OnShow", OnShow)
@@ -503,12 +504,16 @@ local function LoadSkin()
 	S:HandleButton(LFGListApplicationDialog.CancelButton)
 	S:HandleEditBox(LFGListApplicationDialogDescription)
 
-	-- LFGListInviteDialog:StripTextures() -- Removes role icon, need to find a way to skin role icon the way it's done everywhere else
 	LFGListInviteDialog:SetTemplate("Transparent")
 	S:HandleButton(LFGListInviteDialog.AcknowledgeButton)
 	S:HandleButton(LFGListInviteDialog.AcceptButton)
 	S:HandleButton(LFGListInviteDialog.DeclineButton)
-
+	LFGListInviteDialog.RoleIcon:SetTexture("Interface\\LFGFrame\\UI-LFG-ICONS-ROLEBACKGROUNDS")
+	local function SetRoleIcon(self, resultID)
+		local _,_,_,_, role = C_LFGList.GetApplicationInfo(resultID)
+		self.RoleIcon:SetTexCoord(GetBackgroundTexCoordsForRole(role))
+	end
+	hooksecurefunc("LFGListInviteDialog_Show", SetRoleIcon)
 
 	S:HandleEditBox(LFGListFrame.SearchPanel.SearchBox)
 

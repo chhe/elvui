@@ -13,7 +13,7 @@ function UF:Construct_PlayerFrame(frame)
 	frame.Health = self:Construct_HealthBar(frame, true, true, 'RIGHT')
 	frame.Health.frequentUpdates = true;
 
-	frame.Power = self:Construct_PowerBar(frame, true, true, 'LEFT', true)
+	frame.Power = self:Construct_PowerBar(frame, true, true, 'LEFT')
 	frame.Power.frequentUpdates = true;
 
 	frame.Name = self:Construct_NameText(frame)
@@ -345,6 +345,17 @@ function UF:Update_PlayerFrame(frame, db)
 		end
 	end
 
+	--Combat Icon
+	do
+		local cIcon = frame.Combat
+		if db.combatIcon and not frame:IsElementEnabled('Combat') then
+			frame:EnableElement('Combat')
+		elseif not db.combatIcon and frame:IsElementEnabled('Combat') then
+			frame:DisableElement('Combat')
+			cIcon:Hide()
+		end
+	end
+
 	--Health
 	do
 		local health = frame.Health
@@ -621,6 +632,12 @@ function UF:Update_PlayerFrame(frame, db)
 		buffs["growth-x"] = db.buffs.anchorPoint == 'LEFT' and 'LEFT' or  db.buffs.anchorPoint == 'RIGHT' and 'RIGHT' or (db.buffs.anchorPoint:find('LEFT') and 'RIGHT' or 'LEFT')
 		buffs.initialAnchor = E.InversePoints[db.buffs.anchorPoint]
 
+		buffs.attachTo = attachTo
+		buffs.point = E.InversePoints[db.buffs.anchorPoint]
+		buffs.anchorPoint = db.buffs.anchorPoint
+		buffs.xOffset = x + db.buffs.xOffset
+		buffs.yOffset = y + db.buffs.yOffset + (E.PixelMode and (db.buffs.anchorPoint:find('TOP') and -1 or 1) or 0)
+
 		if db.buffs.enable then
 			buffs:Show()
 			UF:UpdateAuraIconSettings(buffs)
@@ -657,11 +674,41 @@ function UF:Update_PlayerFrame(frame, db)
 		debuffs["growth-x"] = db.debuffs.anchorPoint == 'LEFT' and 'LEFT' or  db.debuffs.anchorPoint == 'RIGHT' and 'RIGHT' or (db.debuffs.anchorPoint:find('LEFT') and 'RIGHT' or 'LEFT')
 		debuffs.initialAnchor = E.InversePoints[db.debuffs.anchorPoint]
 
+		debuffs.attachTo = attachTo
+		debuffs.point = E.InversePoints[db.debuffs.anchorPoint]
+		debuffs.anchorPoint = db.debuffs.anchorPoint
+		debuffs.xOffset = x + db.debuffs.xOffset
+		debuffs.yOffset = y + db.debuffs.yOffset
+
 		if db.debuffs.enable then
 			debuffs:Show()
 			UF:UpdateAuraIconSettings(debuffs)
 		else
 			debuffs:Hide()
+		end
+	end
+
+	--Smart Aura Position
+	do
+		local position = db.smartAuraPosition
+
+		if position == "BUFFS_ON_DEBUFFS" then
+			if db.debuffs.attachTo == "BUFFS" then
+				E:Print(format(L["This setting caused a conflicting anchor point, where %s would be attached to itself. Please check your anchor points. Setting '%s' to be attached to '%s'."], L["Buffs"], L["Debuffs"], L["Frame"]))
+				db.debuffs.attachTo = "FRAME"
+			end
+			frame.Buffs.PostUpdate = nil
+			frame.Debuffs.PostUpdate = UF.UpdateBuffsHeaderPosition
+		elseif position == "DEBUFFS_ON_BUFFS" then
+			if db.buffs.attachTo == "DEBUFFS" then
+				E:Print(format(L["This setting caused a conflicting anchor point, where '%s' would be attached to itself. Please check your anchor points. Setting '%s' to be attached to '%s'."], L["Debuffs"], L["Buffs"], L["Frame"]))
+				db.buffs.attachTo = "FRAME"
+			end
+			frame.Buffs.PostUpdate = UF.UpdateDebuffsHeaderPosition
+			frame.Debuffs.PostUpdate = nil
+		else
+			frame.Buffs.PostUpdate = nil
+			frame.Debuffs.PostUpdate = nil
 		end
 	end
 
@@ -935,6 +982,7 @@ function UF:Update_PlayerFrame(frame, db)
 			auraBars:Show()
 			auraBars.friendlyAuraType = db.aurabar.friendlyAuraType
 			auraBars.enemyAuraType = db.aurabar.enemyAuraType
+			auraBars.scaleTime = db.aurabar.uniformThreshold
 
 			local buffColor = UF.db.colors.auraBarBuff
 			local debuffColor = UF.db.colors.auraBarDebuff
@@ -1048,3 +1096,19 @@ function UF:Update_PlayerFrame(frame, db)
 end
 
 tinsert(UF['unitstoload'], 'player')
+
+--Bugfix: Death Runes show as Blood Runes on first login ( http://git.tukui.org/Elv/elvui/issues/411 )
+--For some reason the registered "PLAYER_ENTERING_WORLD" in runebar.lua doesn't trigger on first login.
+local function UpdateAllRunes()
+	local frame = _G["ElvUF_Player"]
+	if frame and frame.Runes and frame.Runes.UpdateAllRuneTypes then
+		frame.Runes.UpdateAllRuneTypes(frame)
+	end
+end
+local f = CreateFrame("Frame")
+f:RegisterEvent("PLAYER_ENTERING_WORLD")
+f:SetScript("OnEvent", function(self, event)
+	self:UnregisterEvent(event)
+	
+	C_Timer.After(5, UpdateAllRunes) --Delay it, since the WoW client updates Death Runes after PEW
+end)

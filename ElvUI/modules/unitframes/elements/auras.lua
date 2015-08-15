@@ -56,7 +56,7 @@ function UF:Construct_AuraIcon(button)
 
 	button:RegisterForClicks('RightButtonUp')
 	button:SetScript('OnClick', function(self)
-		if not IsShiftKeyDown() then return; end
+		if E.db.unitframe.auraBlacklistModifier == "NONE" or not ((E.db.unitframe.auraBlacklistModifier == "SHIFT" and IsShiftKeyDown()) or (E.db.unitframe.auraBlacklistModifier == "ALT" and IsAltKeyDown()) or (E.db.unitframe.auraBlacklistModifier == "CTRL" and IsControlKeyDown())) then return; end
 		local auraName = self.name
 
 		if auraName then
@@ -361,4 +361,34 @@ function UF:AuraFilter(unit, icon, name, rank, texture, count, dtype, duration, 
 	end
 
 	return returnValue
+end
+
+function UF:UpdateBuffsHeaderPosition()
+	local parent = self:GetParent()
+	local buffs = parent.Buffs
+	local debuffs = parent.Debuffs
+	local numDebuffs = self.visibleDebuffs
+
+	if numDebuffs == 0 then
+		buffs:ClearAllPoints()
+		buffs:SetPoint(debuffs.point, debuffs.attachTo, debuffs.anchorPoint, debuffs.xOffset, debuffs.yOffset)
+	else
+		buffs:ClearAllPoints()
+		buffs:SetPoint(buffs.point, buffs.attachTo, buffs.anchorPoint, buffs.xOffset, buffs.yOffset)
+	end
+end
+
+function UF:UpdateDebuffsHeaderPosition()
+	local parent = self:GetParent()
+	local debuffs = parent.Debuffs
+	local buffs = parent.Buffs
+	local numBuffs = self.visibleBuffs
+
+	if numBuffs == 0 then
+		debuffs:ClearAllPoints()
+		debuffs:SetPoint(buffs.point, buffs.attachTo, buffs.anchorPoint, buffs.xOffset, buffs.yOffset)
+	else
+		debuffs:ClearAllPoints()
+		debuffs:SetPoint(debuffs.point, debuffs.attachTo, debuffs.anchorPoint, debuffs.xOffset, debuffs.yOffset)
+	end
 end

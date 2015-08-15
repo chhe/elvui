@@ -11,6 +11,7 @@ local gsub = string.gsub
 local tolower = string.lower
 local targetIndicator
 local _G = _G
+local targetAlpha = 1
 
 --Pattern to remove cross realm label added to the end of plate names
 --Taken from http://www.wowace.com/addons/libnameplateregistry-1-0/
@@ -66,6 +67,17 @@ NP.ComboColors = {
 	[3] = {0.65, 0.63, 0.35},
 	[4] = {0.65, 0.63, 0.35},
 	[5] = {0.33, 0.59, 0.33}
+}
+
+NP.RaidMarkColors = {
+	["STAR"] = {r = 0.85, g = 0.81, b = 0.27},
+	["MOON"] = {r = 0.60,g = 0.75,b = 0.85},
+	["CIRCLE"] = {r = 0.93,g = 0.51,b = 0.06},
+	["SQUARE"] = {r = 0,g = 0.64,b = 1},
+	["DIAMOND"] = {r = 0.7,g = 0.06,b = 0.84},
+	["CROSS"] = {r = 0.82,g = 0.18,b = 0.18},
+	["TRIANGLE"] = {r = 0.14,g = 0.66,b = 0.14},
+	["SKULL"] = {r = 0.89,g = 0.83,b = 0.74},
 }
 
 local AURA_UPDATE_INTERVAL = 0.1
@@ -421,6 +433,12 @@ function NP:ColorizeAndScale(myPlate)
 	else
 		color = NP.db.reactions.enemy
 	end
+	
+	if self.raidIcon:IsShown() and NP.db.healthBar.colorByRaidIcon then
+		NP:CheckRaidIcon(self)
+		local raidColor = NP.RaidMarkColors[self.raidIconType]
+		color = raidColor or color
+	end
 
 	if (NP.db.healthBar.lowHPScale.enable and NP.db.healthBar.lowHPScale.changeColor and myPlate.lowHealth:IsShown() and canAttack) then
 		color = NP.db.healthBar.lowHPScale.color
@@ -461,7 +479,7 @@ function NP:SetAlpha(myPlate)
 	if self:GetAlpha() < 1 then
 		myPlate:SetAlpha(NP.db.nonTargetAlpha)
 	else
-		myPlate:SetAlpha(1)
+		myPlate:SetAlpha(targetAlpha)
 	end
 end
 
@@ -529,9 +547,11 @@ function NP:PLAYER_TARGET_CHANGED()
 		self.targetName = UnitName("target")
 		WorldFrame.elapsed = 0.1
 		NP.NumTargetChecks = 0
+		targetAlpha = E.db.nameplate.targetAlpha
 	else
 		targetIndicator:Hide()
 		self.targetName = nil
+		targetAlpha = 1
 	end
 end
 
