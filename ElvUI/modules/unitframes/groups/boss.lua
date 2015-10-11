@@ -384,8 +384,9 @@ function UF:Update_BossFrames(frame, db)
 
 		if position == "BUFFS_ON_DEBUFFS" then
 			if db.debuffs.attachTo == "BUFFS" then
-				E:Print(format(L["This setting caused a conflicting anchor point, where %s would be attached to itself. Please check your anchor points. Setting '%s' to be attached to '%s'."], L["Buffs"], L["Debuffs"], L["Frame"]))
+				E:Print(format(L["This setting caused a conflicting anchor point, where '%s' would be attached to itself. Please check your anchor points. Setting '%s' to be attached to '%s'."], L["Buffs"], L["Debuffs"], L["Frame"]))
 				db.debuffs.attachTo = "FRAME"
+				frame.Debuffs.attachTo = frame
 			end
 			frame.Buffs.PostUpdate = nil
 			frame.Debuffs.PostUpdate = UF.UpdateBuffsHeaderPosition
@@ -393,6 +394,7 @@ function UF:Update_BossFrames(frame, db)
 			if db.buffs.attachTo == "DEBUFFS" then
 				E:Print(format(L["This setting caused a conflicting anchor point, where '%s' would be attached to itself. Please check your anchor points. Setting '%s' to be attached to '%s'."], L["Debuffs"], L["Buffs"], L["Frame"]))
 				db.buffs.attachTo = "FRAME"
+				frame.Buffs.attachTo = frame
 			end
 			frame.Buffs.PostUpdate = UF.UpdateDebuffsHeaderPosition
 			frame.Debuffs.PostUpdate = nil
@@ -498,6 +500,12 @@ function UF:Update_BossFrames(frame, db)
 		if E.db.unitframe.debuffHighlighting then
 			if not frame:IsElementEnabled('DebuffHighlight') then
 				frame:EnableElement('DebuffHighlight')
+				frame.DebuffHighlightFilterTable = E.global.unitframe.DebuffHighlightColors
+				if E.db.unitframe.debuffHighlighting == 'GLOW' then
+					frame.DebuffHighlightBackdrop = true
+				else
+					frame.DebuffHighlightBackdrop = false
+				end						
 			end
 		else
 			if frame:IsElementEnabled('DebuffHighlight') then

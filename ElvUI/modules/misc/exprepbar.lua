@@ -148,7 +148,7 @@ local function ReputationBar_OnEnter(self)
 		GameTooltip:AddLine(' ')
 
 		GameTooltip:AddDoubleLine(STANDING..':', friendID and friendTextLevel or _G['FACTION_STANDING_LABEL'..reaction], 1, 1, 1)
-		GameTooltip:AddDoubleLine(REPUTATION..':', format('%d / %d (%d%%)', value - min, max - min, (value - min) / (max - min) * 100), 1, 1, 1)
+		GameTooltip:AddDoubleLine(REPUTATION..':', format('%d / %d (%d%%)', value - min, max - min, (value - min) / ((max - min == 0) and max or (max - min)) * 100), 1, 1, 1)
 	end
 	GameTooltip:Show()
 end
@@ -195,6 +195,9 @@ function M:UpdateExpRepDimensions()
 	self.expBar.statusBar:SetOrientation(E.db.general.experience.orientation)
 	self.repBar.statusBar:SetOrientation(E.db.general.reputation.orientation)
 	self.expBar.rested:SetOrientation(E.db.general.experience.orientation)
+	self.expBar.statusBar:SetReverseFill(E.db.general.experience.reverseFill)
+	self.repBar.statusBar:SetReverseFill(E.db.general.reputation.reverseFill)
+	self.expBar.rested:SetReverseFill(E.db.general.experience.reverseFill)
 
 	if E.db.general.experience.mouseover then
 		self.expBar:SetAlpha(0)

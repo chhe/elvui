@@ -240,7 +240,7 @@ E.Options.args.general = {
 							name = L["Font Size"],
 							get = function(info) return E.private.general.chatBubbleFontSize end,
 							set = function(info, value) E.private.general.chatBubbleFontSize = value; E:StaticPopup_Show("PRIVATE_RL") end,
-							min = 6, max = 20, step = 1,
+							min = 4, max = 20, step = 1,
 						},
 					},
 				},
@@ -264,7 +264,7 @@ E.Options.args.general = {
 							name = L["Font Size"],
 							desc = L["Set the font size for everything in UI. Note: This doesn't effect somethings that have their own seperate options (UnitFrame Font, Datatext Font, ect..)"],
 							type = "range",
-							min = 6, max = 22, step = 1,
+							min = 4, max = 22, step = 1,
 							set = function(info, value) E.db.general[ info[#info] ] = value; E:UpdateMedia(); E:UpdateFontTemplates(); end,
 						},
 						font = {
@@ -825,8 +825,13 @@ E.Options.args.general = {
 						['VERTICAL'] = L["Vertical"]
 					}
 				},
-				textFormat = {
+				reverseFill = {
 					order = 6,
+					type = "toggle",
+					name = L["Reverse Fill Direction"],
+				},
+				textFormat = {
+					order = 7,
 					type = 'select',
 					name = L["Text Format"],
 					values = {
@@ -838,7 +843,7 @@ E.Options.args.general = {
 					set = function(info, value) E.db.general.experience[ info[#info] ] = value; E:GetModule('Misc'):UpdateExperience() end,
 				},
 				textSize = {
-					order = 7,
+					order = 8,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
@@ -890,8 +895,13 @@ E.Options.args.general = {
 						['VERTICAL'] = L["Vertical"]
 					}
 				},
-				textFormat = {
+				reverseFill = {
 					order = 6,
+					type = "toggle",
+					name = L["Reverse Fill Direction"],
+				},
+				textFormat = {
+					order = 7,
 					type = 'select',
 					name = L["Text Format"],
 					values = {
@@ -903,7 +913,7 @@ E.Options.args.general = {
 					set = function(info, value) E.db.general.reputation[ info[#info] ] = value; E:GetModule('Misc'):UpdateReputation() end,
 				},
 				textSize = {
-					order = 7,
+					order = 8,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,

@@ -60,6 +60,18 @@ local auraBarsSortValues = {
 	['NONE'] = NONE,
 }
 
+local auraSortValues = {
+	['TIME_REMAINING'] = L["Time Remaining"],
+	['DURATION'] = L["Duration"],
+	['NAME'] = NAME,
+	['INDEX'] = L["Index"],
+}
+
+local auraSortMethodValues = {
+	['ASCENDING'] = L["Ascending"],
+	['DESCENDING'] = L["Descending"]
+}
+
 local CUSTOMTEXT_CONFIGS = {}
 
 -----------------------------------------------------------------------
@@ -459,6 +471,20 @@ local function GetOptionsTable_Auras(friendlyUnitOnly, auraType, isGroupFrame, u
 				desc = L["Ignore mouse events."],
 				type = 'toggle',
 			},
+			sortMethod = {
+				order = 16,
+				name = L["Sort By"],
+				desc = L["Method to sort by."],
+				type = 'select',
+				values = auraSortValues,
+			},
+			sortDirection = {
+				order = 16,
+				name = L["Sort Direction"],
+				desc = L["Ascending or Descending order."],
+				type = 'select',
+				values = auraSortMethodValues,
+			},			
 			filters = {
 				name = L["Filters"],
 				guiInline = true,
@@ -1038,6 +1064,55 @@ local function GetOptionsTable_GPS(groupName)
 	return config
 end
 
+local function GetOptionsTableForNonGroup_GPS(unit)
+	local config = {
+		order = 3000,
+		type = 'group',
+		name = L["GPS Arrow"],
+		get = function(info) return E.db.unitframe.units[unit]['GPSArrow'][ info[#info] ] end,
+		set = function(info, value) E.db.unitframe.units[unit]['GPSArrow'][ info[#info] ] = value; UF:CreateAndUpdateUF(unit) end,
+		args = {
+			enable = {
+				type = 'toggle',
+				order = 1,
+				name = L["Enable"],
+			},
+			onMouseOver = {
+				type = 'toggle',
+				order = 2,
+				name = L["Mouseover"],
+				desc = L["Only show when you are mousing over a frame."],
+			},
+			outOfRange = {
+				type = 'toggle',
+				order = 3,
+				name = L["Out of Range"],
+				desc = L["Only show when the unit is not in range."],
+			},
+			size = {
+				type = 'range',
+				name = L["Size"],
+				order = 4,
+				min = 8, max = 60, step = 1,
+			},
+			xOffset = {
+				order = 5,
+				type = 'range',
+				name = L["xOffset"],
+				min = -300, max = 300, step = 1,
+			},
+			yOffset = {
+				order = 6,
+				type = 'range',
+				name = L["yOffset"],
+				min = -300, max = 300, step = 1,
+			},
+		}
+	}
+
+	return config
+end
+
 local function GetOptionsTable_Name(updateFunc, groupName, numUnits)
 	local config = {
 		order = 400,
@@ -1147,7 +1222,7 @@ local function GetOptionsTable_Portrait(updateFunc, groupName, numUnits)
 	return config
 end
 
-local function GetOptionsTable_Power(hasDetatchOption, updateFunc, groupName, numUnits)
+local function GetOptionsTable_Power(hasDetatchOption, updateFunc, groupName, numUnits, hasStrataLevel)
 	local config = {
 		order = 200,
 		type = 'group',
@@ -1279,6 +1354,53 @@ local function GetOptionsTable_Power(hasDetatchOption, updateFunc, groupName, nu
 				disabled = function() return not E.db.unitframe.units[groupName].power.detachFromFrame end,
 				min = 15, max = 450, step = 1,
 			}
+	end
+	
+	if hasStrataLevel then
+		config.args.strataAndLevel = {
+			order = 101,
+			type = "group",
+			name = L["Strata and Level"],
+			get = function(info) return E.db.unitframe.units[groupName]['power']["strataAndLevel"][ info[#info] ] end,
+			set = function(info, value) E.db.unitframe.units[groupName]['power']["strataAndLevel"][ info[#info] ] = value; updateFunc(UF, groupName, numUnits) end,
+			guiInline = true,
+			args = {
+				useCustomStrata = {
+					order = 1,
+					type = "toggle",
+					name = L["Use Custom Strata"],
+				},
+				frameStrata = {
+					order = 2,
+					type = "select",
+					name = L["Frame Strata"],
+					values = {
+						["BACKGROUND"] = "BACKGROUND",
+						["LOW"] = "LOW",
+						["MEDIUM"] = "MEDIUM",
+						["HIGH"] = "HIGH",
+						["DIALOG"] = "DIALOG",
+						["TOOLTIP"] = "TOOLTIP",
+					},
+				},
+				spacer = {
+					order = 3,
+					type = "description",
+					name = "",
+				},
+				useCustomLevel = {
+					order = 4,
+					type = "toggle",
+					name = L["Use Custom Level"],
+				},
+				frameLevel = {
+					order = 5,
+					type = "range",
+					name = L["Frame Level"],
+					min = 0, max = 128, step = 1,
+				},
+			},
+		}
 	end
 
 	if groupName == 'player' and E.myclass == 'DRUID' then
@@ -1412,7 +1534,7 @@ function UF:CreateCustomTextGroup(unit, objectName)
 				order = 3,
 				name = L["Font Size"],
 				type = "range",
-				min = 6, max = 32, step = 1,
+				min = 4, max = 32, step = 1,
 			},
 			fontOutline = {
 				order = 4,
@@ -1550,7 +1672,12 @@ E.Options.args.unitframe = {
 							order = 3,
 							name = L["Debuff Highlighting"],
 							desc = L["Color the unit healthbar if there is a debuff that can be dispelled by you."],
-							type = 'toggle',
+							type = 'select',
+							values = {
+								['NONE'] = NONE,
+								['GLOW'] = L['Glow'],
+								['FILL'] = L['Fill']
+							},
 						},
 						smartRaidFilter = {
 							order = 4,
@@ -1621,7 +1748,7 @@ E.Options.args.unitframe = {
 							name = L["Font Size"],
 							desc = L["Set the font size for unitframes."],
 							type = "range",
-							min = 6, max = 22, step = 1,
+							min = 4, max = 22, step = 1,
 							set = function(info, value) E.db.unitframe[ info[#info] ] = value; UF:Update_FontStrings() end,
 						},
 						fontOutline = {
@@ -2153,7 +2280,7 @@ E.Options.args.unitframe.args.player = {
 		},
 		customText = GetOptionsTable_CustomText(UF.CreateAndUpdateUF, 'player'),
 		health = GetOptionsTable_Health(false, UF.CreateAndUpdateUF, 'player'),
-		power = GetOptionsTable_Power(true, UF.CreateAndUpdateUF, 'player'),
+		power = GetOptionsTable_Power(true, UF.CreateAndUpdateUF, 'player', nil, true),
 		name = GetOptionsTable_Name(UF.CreateAndUpdateUF, 'player'),
 		portrait = GetOptionsTable_Portrait(UF.CreateAndUpdateUF, 'player'),
 		buffs = GetOptionsTable_Auras(true, 'buffs', false, UF.CreateAndUpdateUF, 'player'),
@@ -2199,6 +2326,11 @@ E.Options.args.unitframe.args.player = {
 					name = L["Detached Width"],
 					disabled = function() return not E.db.unitframe.units['player']['classbar'].detachFromFrame end,
 					min = 15, max = 450, step = 1,
+				},
+				autoHide = {
+					order = 6,
+					type = 'toggle',
+					name = L["Auto-Hide"],
 				},
 			},
 		},
@@ -2350,7 +2482,7 @@ E.Options.args.unitframe.args.target = {
 			name = L["Smart Aura Position"],
 			desc = L["Will show Buffs in the Debuff position when there are no Debuffs active, or vice versa."],
 			values = {
-				["DISABLED"] = "Disabled",
+				["DISABLED"] = L["Disabled"],
 				["BUFFS_ON_DEBUFFS"] = L["Position Buffs on Debuffs"],
 				["DEBUFFS_ON_BUFFS"] = L["Position Debuffs on Buffs"],
 			},
@@ -2403,7 +2535,7 @@ E.Options.args.unitframe.args.target = {
 		},
 		customText = GetOptionsTable_CustomText(UF.CreateAndUpdateUF, 'target'),
 		health = GetOptionsTable_Health(false, UF.CreateAndUpdateUF, 'target'),
-		power = GetOptionsTable_Power(true, UF.CreateAndUpdateUF, 'target'),
+		power = GetOptionsTable_Power(true, UF.CreateAndUpdateUF, 'target', nil, true),
 		name = GetOptionsTable_Name(UF.CreateAndUpdateUF, 'target'),
 		portrait = GetOptionsTable_Portrait(UF.CreateAndUpdateUF, 'target'),
 		buffs = GetOptionsTable_Auras(false, 'buffs', false, UF.CreateAndUpdateUF, 'target'),
@@ -2411,6 +2543,7 @@ E.Options.args.unitframe.args.target = {
 		castbar = GetOptionsTable_Castbar(false, UF.CreateAndUpdateUF, 'target'),
 		aurabar = GetOptionsTable_AuraBars(false, UF.CreateAndUpdateUF, 'target'),
 		raidicon = GetOptionsTable_RaidIcon(UF.CreateAndUpdateUF, 'target'),
+		GPSArrow = GetOptionsTableForNonGroup_GPS('target')
 	},
 }
 
@@ -2495,7 +2628,7 @@ E.Options.args.unitframe.args.targettarget = {
 			name = L["Smart Aura Position"],
 			desc = L["Will show Buffs in the Debuff position when there are no Debuffs active, or vice versa."],
 			values = {
-				["DISABLED"] = "Disabled",
+				["DISABLED"] = L["Disabled"],
 				["BUFFS_ON_DEBUFFS"] = L["Position Buffs on Debuffs"],
 				["DEBUFFS_ON_BUFFS"] = L["Position Debuffs on Buffs"],
 			},
@@ -2591,7 +2724,7 @@ E.Options.args.unitframe.args.targettargettarget = {
 			name = L["Smart Aura Position"],
 			desc = L["Will show Buffs in the Debuff position when there are no Debuffs active, or vice versa."],
 			values = {
-				["DISABLED"] = "Disabled",
+				["DISABLED"] = L["Disabled"],
 				["BUFFS_ON_DEBUFFS"] = L["Position Buffs on Debuffs"],
 				["DEBUFFS_ON_BUFFS"] = L["Position Debuffs on Buffs"],
 			},
@@ -2693,7 +2826,7 @@ E.Options.args.unitframe.args.focus = {
 			name = L["Smart Aura Position"],
 			desc = L["Will show Buffs in the Debuff position when there are no Debuffs active, or vice versa."],
 			values = {
-				["DISABLED"] = "Disabled",
+				["DISABLED"] = L["Disabled"],
 				["BUFFS_ON_DEBUFFS"] = L["Position Buffs on Debuffs"],
 				["DEBUFFS_ON_BUFFS"] = L["Position Debuffs on Buffs"],
 			},
@@ -2707,6 +2840,7 @@ E.Options.args.unitframe.args.focus = {
 		castbar = GetOptionsTable_Castbar(false, UF.CreateAndUpdateUF, 'focus'),
 		aurabar = GetOptionsTable_AuraBars(false, UF.CreateAndUpdateUF, 'focus'),
 		raidicon = GetOptionsTable_RaidIcon(UF.CreateAndUpdateUF, 'focus'),
+		GPSArrow = GetOptionsTableForNonGroup_GPS('focus')
 	},
 }
 
@@ -2791,7 +2925,7 @@ E.Options.args.unitframe.args.focustarget = {
 			name = L["Smart Aura Position"],
 			desc = L["Will show Buffs in the Debuff position when there are no Debuffs active, or vice versa."],
 			values = {
-				["DISABLED"] = "Disabled",
+				["DISABLED"] = L["Disabled"],
 				["BUFFS_ON_DEBUFFS"] = L["Position Buffs on Debuffs"],
 				["DEBUFFS_ON_BUFFS"] = L["Position Debuffs on Buffs"],
 			},
@@ -2893,7 +3027,7 @@ E.Options.args.unitframe.args.pet = {
 			name = L["Smart Aura Position"],
 			desc = L["Will show Buffs in the Debuff position when there are no Debuffs active, or vice versa."],
 			values = {
-				["DISABLED"] = "Disabled",
+				["DISABLED"] = L["Disabled"],
 				["BUFFS_ON_DEBUFFS"] = L["Position Buffs on Debuffs"],
 				["DEBUFFS_ON_BUFFS"] = L["Position Debuffs on Buffs"],
 			},
@@ -3016,7 +3150,7 @@ E.Options.args.unitframe.args.pettarget = {
 			name = L["Smart Aura Position"],
 			desc = L["Will show Buffs in the Debuff position when there are no Debuffs active, or vice versa."],
 			values = {
-				["DISABLED"] = "Disabled",
+				["DISABLED"] = L["Disabled"],
 				["BUFFS_ON_DEBUFFS"] = L["Position Buffs on Debuffs"],
 				["DEBUFFS_ON_BUFFS"] = L["Position Debuffs on Buffs"],
 			},
@@ -3131,7 +3265,7 @@ E.Options.args.unitframe.args.boss = {
 			name = L["Smart Aura Position"],
 			desc = L["Will show Buffs in the Debuff position when there are no Debuffs active, or vice versa."],
 			values = {
-				["DISABLED"] = "Disabled",
+				["DISABLED"] = L["Disabled"],
 				["BUFFS_ON_DEBUFFS"] = L["Position Buffs on Debuffs"],
 				["DEBUFFS_ON_BUFFS"] = L["Position Debuffs on Buffs"],
 			},
@@ -3266,7 +3400,7 @@ E.Options.args.unitframe.args.arena = {
 			name = L["Smart Aura Position"],
 			desc = L["Will show Buffs in the Debuff position when there are no Debuffs active, or vice versa."],
 			values = {
-				["DISABLED"] = "Disabled",
+				["DISABLED"] = L["Disabled"],
 				["BUFFS_ON_DEBUFFS"] = L["Position Buffs on Debuffs"],
 				["DEBUFFS_ON_BUFFS"] = L["Position Debuffs on Buffs"],
 			},
@@ -3710,20 +3844,37 @@ E.Options.args.unitframe.args.party = {
 					order = 2,
 					min = 8, max = 35, step = 1,
 				},
+				font = {
+					order = 3,
+					type = "select", dialogControl = "LSM30_Font",
+					name = L["Font"],
+					values = AceGUIWidgetLSMlists.font,
+				},
 				fontSize = {
 					type = 'range',
 					name = L["Font Size"],
-					order = 3,
+					order = 4,
 					min = 7, max = 22, step = 1,
 				},
+				fontOutline = {
+					order = 5,
+					type = "select",
+					name = L["Font Outline"],
+					values = {
+						["NONE"] = L["None"],
+						["OUTLINE"] = "OUTLINE",
+						["MONOCHROMEOUTLINE"] = "MONOCROMEOUTLINE",
+						["THICKOUTLINE"] = "THICKOUTLINE",
+					},
+				},
 				xOffset = {
-					order = 4,
+					order = 6,
 					type = 'range',
 					name = L["xOffset"],
 					min = -300, max = 300, step = 1,
 				},
 				yOffset = {
-					order = 5,
+					order = 7,
 					type = 'range',
 					name = L["yOffset"],
 					min = -300, max = 300, step = 1,
@@ -3732,7 +3883,7 @@ E.Options.args.unitframe.args.party = {
 					type = 'execute',
 					name = L["Configure Auras"],
 					func = function() E:SetToFilterConfig('RaidDebuffs') end,
-					order = 7
+					order = 8
 				},
 				duration = {
 					order = 11,
@@ -4400,20 +4551,37 @@ E.Options.args.unitframe.args['raid'] = {
 					order = 2,
 					min = 8, max = 35, step = 1,
 				},
+				font = {
+					order = 3,
+					type = "select", dialogControl = "LSM30_Font",
+					name = L["Font"],
+					values = AceGUIWidgetLSMlists.font,
+				},
 				fontSize = {
 					type = 'range',
 					name = L["Font Size"],
-					order = 3,
+					order = 4,
 					min = 7, max = 22, step = 1,
 				},
+				fontOutline = {
+					order = 5,
+					type = "select",
+					name = L["Font Outline"],
+					values = {
+						["NONE"] = L["None"],
+						["OUTLINE"] = "OUTLINE",
+						["MONOCHROMEOUTLINE"] = "MONOCROMEOUTLINE",
+						["THICKOUTLINE"] = "THICKOUTLINE",
+					},
+				},
 				xOffset = {
-					order = 4,
+					order = 6,
 					type = 'range',
 					name = L["xOffset"],
 					min = -300, max = 300, step = 1,
 				},
 				yOffset = {
-					order = 5,
+					order = 7,
 					type = 'range',
 					name = L["yOffset"],
 					min = -300, max = 300, step = 1,
@@ -4422,7 +4590,7 @@ E.Options.args.unitframe.args['raid'] = {
 					type = 'execute',
 					name = L["Configure Auras"],
 					func = function() E:SetToFilterConfig('RaidDebuffs') end,
-					order = 7
+					order = 8
 				},
 				duration = {
 					order = 11,
@@ -4920,20 +5088,37 @@ E.Options.args.unitframe.args['raid40'] = {
 					order = 2,
 					min = 8, max = 35, step = 1,
 				},
+				font = {
+					order = 3,
+					type = "select", dialogControl = "LSM30_Font",
+					name = L["Font"],
+					values = AceGUIWidgetLSMlists.font,
+				},
 				fontSize = {
 					type = 'range',
 					name = L["Font Size"],
-					order = 3,
+					order = 4,
 					min = 7, max = 22, step = 1,
 				},
+				fontOutline = {
+					order = 5,
+					type = "select",
+					name = L["Font Outline"],
+					values = {
+						["NONE"] = L["None"],
+						["OUTLINE"] = "OUTLINE",
+						["MONOCHROMEOUTLINE"] = "MONOCROMEOUTLINE",
+						["THICKOUTLINE"] = "THICKOUTLINE",
+					},
+				},
 				xOffset = {
-					order = 4,
+					order = 6,
 					type = 'range',
 					name = L["xOffset"],
 					min = -300, max = 300, step = 1,
 				},
 				yOffset = {
-					order = 5,
+					order = 7,
 					type = 'range',
 					name = L["yOffset"],
 					min = -300, max = 300, step = 1,
@@ -4942,7 +5127,7 @@ E.Options.args.unitframe.args['raid40'] = {
 					type = 'execute',
 					name = L["Configure Auras"],
 					func = function() E:SetToFilterConfig('RaidDebuffs') end,
-					order = 7
+					order = 8
 				},
 				duration = {
 					order = 11,
@@ -5347,20 +5532,37 @@ E.Options.args.unitframe.args.raidpet = {
 					order = 2,
 					min = 8, max = 35, step = 1,
 				},
+				font = {
+					order = 3,
+					type = "select", dialogControl = "LSM30_Font",
+					name = L["Font"],
+					values = AceGUIWidgetLSMlists.font,
+				},
 				fontSize = {
 					type = 'range',
 					name = L["Font Size"],
-					order = 3,
+					order = 4,
 					min = 7, max = 22, step = 1,
 				},
+				fontOutline = {
+					order = 5,
+					type = "select",
+					name = L["Font Outline"],
+					values = {
+						["NONE"] = L["None"],
+						["OUTLINE"] = "OUTLINE",
+						["MONOCHROMEOUTLINE"] = "MONOCROMEOUTLINE",
+						["THICKOUTLINE"] = "THICKOUTLINE",
+					},
+				},
 				xOffset = {
-					order = 4,
+					order = 6,
 					type = 'range',
 					name = L["xOffset"],
 					min = -300, max = 300, step = 1,
 				},
 				yOffset = {
-					order = 5,
+					order = 7,
 					type = 'range',
 					name = L["yOffset"],
 					min = -300, max = 300, step = 1,
@@ -5369,7 +5571,7 @@ E.Options.args.unitframe.args.raidpet = {
 					type = 'execute',
 					name = L["Configure Auras"],
 					func = function() E:SetToFilterConfig('RaidDebuffs') end,
-					order = 7
+					order = 8
 				},
 				duration = {
 					order = 11,

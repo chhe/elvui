@@ -727,6 +727,7 @@ local function LoadSkin()
         "DisplayPanelCinematicSubtitles",
         "DisplayPanelRotateMinimap",
         "DisplayPanelShowAccountAchievments",
+		"DisplayPanelAJAlerts",
         --Objectives
         "ObjectivesPanelAutoQuestTracking",
         "ObjectivesPanelMapFade",
@@ -843,6 +844,7 @@ local function LoadSkin()
 		--Watev
 		"NamesPanelUnitNameplatesNameplateClassColors",
     }
+
     for i = 1, getn(interfacecheckbox) do
         local icheckbox = _G["InterfaceOptions"..interfacecheckbox[i]]
         if icheckbox then

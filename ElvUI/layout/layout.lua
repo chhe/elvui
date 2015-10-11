@@ -68,10 +68,12 @@ local function ChatButton_OnEnter(self, ...)
 		UIFrameFadeIn(self, 0.2, self:GetAlpha(), 1)
 	end
 
-	GameTooltip:SetOwner(self, 'ANCHOR_TOPLEFT', 0, 4)
-	GameTooltip:ClearLines()
-	GameTooltip:AddDoubleLine(L["Left Click:"], L["Toggle Chat Frame"], 1, 1, 1)
-	GameTooltip:Show()
+	if not self.parent.editboxforced then
+		GameTooltip:SetOwner(self, 'ANCHOR_TOPLEFT', 0, 4)
+		GameTooltip:ClearLines()
+		GameTooltip:AddDoubleLine(L["Left Click:"], L["Toggle Chat Frame"], 1, 1, 1)
+		GameTooltip:Show()
+	end
 end
 
 local function ChatButton_OnLeave(self, ...)
@@ -362,7 +364,7 @@ function LO:CreateMinimapPanels()
 	configtoggle:Width(E.ConsolidatedBuffsWidth)
 	configtoggle:SetTemplate(E.db.datatexts.panelTransparency and 'Transparent' or 'Default', true)
 	configtoggle.text = configtoggle:CreateFontString(nil, 'OVERLAY')
-	configtoggle.text:FontTemplate()
+	configtoggle.text:FontTemplate(E.LSM:Fetch("font", E.db.datatexts.font), E.db.datatexts.fontSize, E.db.datatexts.fontOutline)
 	configtoggle.text:SetText('C')
 	configtoggle.text:SetPoint('CENTER')
 	configtoggle.text:SetJustifyH('CENTER')

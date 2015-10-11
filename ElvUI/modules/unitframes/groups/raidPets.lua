@@ -276,17 +276,18 @@ function UF:Update_RaidpetFrames(frame, db)
 		local stackColor = db.rdebuffs.stack.color
 		local durationColor = db.rdebuffs.duration.color
 		if db.rdebuffs.enable then
+			local rdebuffsFont = UF.LSM:Fetch("font", db.rdebuffs.font)
 			frame:EnableElement('RaidDebuffs')
 
 			rdebuffs:Size(db.rdebuffs.size)
 			rdebuffs:Point('BOTTOM', frame, 'BOTTOM', db.rdebuffs.xOffset, db.rdebuffs.yOffset)
 			
-			rdebuffs.count:FontTemplate(nil, db.rdebuffs.fontSize, 'OUTLINE')
+			rdebuffs.count:FontTemplate(rdebuffsFont, db.rdebuffs.fontSize, db.rdebuffs.fontOutline)
 			rdebuffs.count:ClearAllPoints()
 			rdebuffs.count:Point(db.rdebuffs.stack.position, db.rdebuffs.stack.xOffset, db.rdebuffs.stack.yOffset)
 			rdebuffs.count:SetTextColor(stackColor.r, stackColor.g, stackColor.b)
 			
-			rdebuffs.time:FontTemplate(nil, db.rdebuffs.fontSize, 'OUTLINE')
+			rdebuffs.time:FontTemplate(rdebuffsFont, db.rdebuffs.fontSize, db.rdebuffs.fontOutline)
 			rdebuffs.time:ClearAllPoints()
 			rdebuffs.time:Point(db.rdebuffs.duration.position, db.rdebuffs.duration.xOffset, db.rdebuffs.duration.yOffset)
 			rdebuffs.time:SetTextColor(durationColor.r, durationColor.g, durationColor.b)
@@ -318,6 +319,14 @@ function UF:Update_RaidpetFrames(frame, db)
 		local dbh = frame.DebuffHighlight
 		if E.db.unitframe.debuffHighlighting then
 			frame:EnableElement('DebuffHighlight')
+			frame.DebuffHighlightFilterTable = E.global.unitframe.DebuffHighlightColors
+
+			if E.db.unitframe.debuffHighlighting == 'GLOW' then
+				frame.DebuffHighlightBackdrop = true
+				frame.DBHGlow:SetAllPoints(frame.Threat.glow)
+			else
+				frame.DebuffHighlightBackdrop = false
+			end					
 		else
 			frame:DisableElement('DebuffHighlight')
 		end

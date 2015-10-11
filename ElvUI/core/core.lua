@@ -1,11 +1,13 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local LSM = LibStub("LibSharedMedia-3.0")
+local Masque = LibStub("Masque", true)
 
 local format = string.format
 local find = string.find
 local split = string.split
 local match = string.match
 local twipe = table.wipe
+local tonumber = tonumber
 
 --Constants
 E.myclass = select(2, UnitClass("player"));
@@ -230,6 +232,37 @@ local function LSMCallback()
 	E:UpdateMedia()
 end
 E.LSM.RegisterCallback(E, "LibSharedMedia_Registered", LSMCallback)
+
+local MasqueGroupState = {}
+local MasqueGroupToTableElement = {
+	["ActionBars"] = {"actionbar", "actionbars"},
+	["Pet Bar"] = {"actionbar", "petBar"},
+	["Stance Bar"] = {"actionbar", "stanceBar"},
+	["Buffs"] = {"auras", "buffs"},
+	["Debuffs"] = {"auras", "debuffs"},
+	["Consolidated Buffs"] = {"auras", "consolidatedBuffs"},
+}
+
+local function MasqueCallback(Addon, Group, SkinID, Gloss, Backdrop, Colors, Disabled)
+	if not E.private then return; end
+	local element = MasqueGroupToTableElement[Group]
+
+	if element then
+		if Disabled then
+			if E.private[element[1]].masque[element[2]] and MasqueGroupState[Group] == "enabled" then
+				E.private[element[1]].masque[element[2]] = false
+				E:StaticPopup_Show("CONFIG_RL")
+			end
+			MasqueGroupState[Group] = "disabled"
+		else
+			MasqueGroupState[Group] = "enabled"
+		end
+	end
+end
+
+if Masque then
+	Masque:Register("ElvUI", MasqueCallback)
+end
 
 function E:RequestBGInfo()
 	RequestBattlefieldScoreData()
@@ -718,6 +751,7 @@ function E:DBConversions()
 		end
 	end
 	
+	--Add missing Stack Threshold
 	if E.global.unitframe['aurafilters']['RaidDebuffs'].spells then
 		local matchFound
 		for k, v in pairs(E.global.unitframe['aurafilters']['RaidDebuffs'].spells) do
@@ -732,6 +766,19 @@ function E:DBConversions()
 			
 			if not matchFound then
 				E.global.unitframe['aurafilters']['RaidDebuffs']['spells'][k].stackThreshold = 0
+			end
+		end
+	end
+	
+	--Convert spellIDs saved as strings to numbers
+	if E.global.unitframe['aurafilters']['Whitelist (Strict)'].spells then
+		for k, v in pairs(E.global.unitframe['aurafilters']['Whitelist (Strict)'].spells) do
+			if type(v) == 'table' then
+				for k_,v_ in pairs(v) do
+					if k_ == 'spellID' and type(v_) == "string" and tonumber(v_) then
+						E.global.unitframe['aurafilters']['Whitelist (Strict)']['spells'][k].spellID = tonumber(v_)
+					end
+				end
 			end
 		end
 	end

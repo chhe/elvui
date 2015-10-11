@@ -125,9 +125,18 @@ function UF:Construct_DebuffHighlight(frame)
 	dbh:SetBlendMode("ADD")
 	frame.DebuffHighlightFilter = true
 	frame.DebuffHighlightAlpha = 0.45
+	frame.DebuffHighlightFilterTable = E.global.unitframe.DebuffHighlightColors
 
+	frame:CreateShadow('Default')
+	local x = frame.shadow
+	frame.shadow = nil
+	x:Hide();
+
+	frame.DBHGlow = x
+	
 	if frame.Health then
 		dbh:SetParent(frame.Health)
+		frame.DBHGlow:SetParent(frame.Health)
 	end
 
 	return dbh
@@ -257,9 +266,9 @@ function UF:AltPowerBarPostUpdate(min, cur, max)
 		local type = select(10, UnitAlternatePowerInfo(unit))
 
 		if perc > 0 then
-			self.text:SetText(type..": "..format("%d%%", perc))
+			self.text:SetFormattedText("%s: %d%%", type, perc)
 		else
-			self.text:SetText(type..": 0%")
+			self.text:SetFormattedText("%s: 0%%", type)
 		end
 	elseif unit and unit:find("boss%d") and self.text then
 		self.text:SetTextColor(self:GetStatusBarColor())
@@ -269,7 +278,7 @@ function UF:AltPowerBarPostUpdate(min, cur, max)
 			self.text:Point("RIGHT", parent.Power.value.value, "LEFT", 2, E.mult)
 		end
 		if perc > 0 then
-			self.text:SetText("|cffD7BEA5[|r"..format("%d%%", perc).."|cffD7BEA5]|r")
+			self.text:SetFormattedText("|cffD7BEA5[|r%d%%|cffD7BEA5]|r", perc)
 		else
 			self.text:SetText(nil)
 		end
