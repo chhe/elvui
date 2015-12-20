@@ -4,8 +4,22 @@ local _, ns = ...
 local ElvUF = ns.oUF
 assert(ElvUF, "ElvUI was unable to locate oUF.")
 
-local ceil = math.ceil
+--Cache global variables
+--Lua functions
+local _G = _G
+local pairs, unpack = pairs, unpack
 local tinsert = table.insert
+local ceil = math.ceil
+local format = format
+--WoW API / Variables
+local IsAddOnLoaded = IsAddOnLoaded
+local RAID_CLASS_COLORS = RAID_CLASS_COLORS
+local CUSTOM_CLASS_COLORS = CUSTOM_CLASS_COLORS
+local MAX_COMBO_POINTS = MAX_COMBO_POINTS
+
+--Global variables that we don't cache, list them here for mikk's FindGlobals script
+-- GLOBALS: ElvUF_Player
+
 function UF:Construct_TargetFrame(frame)
 	frame.Health = self:Construct_HealthBar(frame, true, true, 'RIGHT')
 	frame.Health.frequentUpdates = true;
@@ -113,6 +127,10 @@ function UF:Update_TargetFrame(frame, db)
 		if USE_MINI_POWERBAR and not POWERBAR_DETACHED then
 			POWERBAR_WIDTH = POWERBAR_WIDTH / 2
 		end
+		
+		if not USE_POWERBAR_OFFSET then
+			POWERBAR_OFFSET = 0
+		end
 	end
 
 	--Health
@@ -138,11 +156,7 @@ function UF:Update_TargetFrame(frame, db)
 				health.colorHealth = true
 			end
 		else
-			health.colorClass = true
-			health.colorReaction = true
-		end
-		if self.db['colors'].forcehealthreaction == true then
-			health.colorClass = false
+			health.colorClass = (not self.db['colors'].forcehealthreaction)
 			health.colorReaction = true
 		end
 
@@ -257,6 +271,12 @@ function UF:Update_TargetFrame(frame, db)
 			end
 			if db.power.strataAndLevel.useCustomLevel then
 				power:SetFrameLevel(db.power.strataAndLevel.frameLevel)
+			end
+			
+			if POWERBAR_DETACHED and db.power.parent == "UIPARENT" then
+				power:SetParent(E.UIParent)
+			else
+				power:SetParent(frame)
 			end
 		elseif frame:IsElementEnabled('Power') then
 			frame:DisableElement('Power')
@@ -621,7 +641,7 @@ function UF:Update_TargetFrame(frame, db)
 	--Debuff Highlight
 	do
 		local dbh = frame.DebuffHighlight
-		if E.db.unitframe.debuffHighlighting then
+		if E.db.unitframe.debuffHighlighting ~= 'NONE' then
 			if not frame:IsElementEnabled('DebuffHighlight') then
 				frame:EnableElement('DebuffHighlight')
 				frame.DebuffHighlightFilterTable = E.global.unitframe.DebuffHighlightColors
@@ -722,11 +742,11 @@ function UF:Update_TargetFrame(frame, db)
 			local attachTo = frame
 
 			if(E:CheckClassColor(buffColor.r, buffColor.g, buffColor.b)) then
-				buffColor = E.myclass == 'PRIEST' and E.PriestColors or RAID_CLASS_COLORS[E.myclass]
+				buffColor = E.myclass == 'PRIEST' and E.PriestColors or (CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[E.myclass] or RAID_CLASS_COLORS[E.myclass])
 			end
 
 			if(E:CheckClassColor(debuffColor.r, debuffColor.g, debuffColor.b)) then
-				debuffColor = E.myclass == 'PRIEST' and E.PriestColors or RAID_CLASS_COLORS[E.myclass]
+				debuffColor = E.myclass == 'PRIEST' and E.PriestColors or (CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[E.myclass] or RAID_CLASS_COLORS[E.myclass])
 			end
 
 			if db.aurabar.attachTo == 'BUFFS' then

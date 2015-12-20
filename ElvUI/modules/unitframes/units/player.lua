@@ -1,6 +1,16 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local UF = E:GetModule('UnitFrames');
 
+--Cache global variables
+--Lua functions
+local _G = _G
+local unpack, pairs = unpack, pairs
+local format = format
+--WoW API / Variables
+local C_TimerAfter = C_Timer.After
+local RAID_CLASS_COLORS = RAID_CLASS_COLORS
+local CUSTOM_CLASS_COLORS = CUSTOM_CLASS_COLORS
+
 local _, ns = ...
 local ElvUF = ns.oUF
 assert(ElvUF, "ElvUI was unable to locate oUF.")
@@ -116,7 +126,6 @@ function UF:UpdatePlayerFrameAnchors(frame, isShown)
 		CLASSBAR_HEIGHT_SPACING = 0
 	end
 
-
 	if USE_STAGGER then
 		if not USE_MINI_POWERBAR and not USE_INSET_POWERBAR and not POWERBAR_DETACHED then
 			stagger:Point('BOTTOMLEFT', power, 'BOTTOMRIGHT', BORDER*2 + (E.PixelMode and -1 or SPACING), 0)
@@ -134,8 +143,8 @@ function UF:UpdatePlayerFrameAnchors(frame, isShown)
 	end
 
 	if isShown then
-		if db.power.offset ~= 0 then
-			health:Point("TOPRIGHT", frame, "TOPRIGHT", -(BORDER+db.power.offset) - STAGGER_WIDTH, -(BORDER + CLASSBAR_HEIGHT_SPACING))
+		if POWERBAR_OFFSET ~= 0 then
+			health:Point("TOPRIGHT", frame, "TOPRIGHT", -(BORDER+POWERBAR_OFFSET) - STAGGER_WIDTH, -(BORDER + CLASSBAR_HEIGHT_SPACING))
 		else
 			health:Point("TOPRIGHT", frame, "TOPRIGHT", -BORDER - STAGGER_WIDTH, -(BORDER + CLASSBAR_HEIGHT_SPACING))
 		end
@@ -181,8 +190,8 @@ function UF:UpdatePlayerFrameAnchors(frame, isShown)
 			end
 		end
 	else
-		if db.power.offset ~= 0 then
-			health:Point("TOPRIGHT", frame, "TOPRIGHT", -(BORDER + db.power.offset) - STAGGER_WIDTH, -BORDER)
+		if POWERBAR_OFFSET ~= 0 then
+			health:Point("TOPRIGHT", frame, "TOPRIGHT", -(BORDER + POWERBAR_OFFSET) - STAGGER_WIDTH, -BORDER)
 		else
 			health:Point("TOPRIGHT", frame, "TOPRIGHT", -BORDER - STAGGER_WIDTH, -BORDER)
 		end
@@ -206,7 +215,7 @@ function UF:UpdatePlayerFrameAnchors(frame, isShown)
 			end
 		end
 
-		if db.portrait.enable and not USE_PORTRAIT_OVERLAY and frame.Portrait then
+		if USE_PORTRAIT and not USE_PORTRAIT_OVERLAY and frame.Portrait then
 			local portrait = frame.Portrait
 			portrait.backdrop:ClearAllPoints()
 			portrait.backdrop:Point("TOPLEFT", frame, "TOPLEFT")
@@ -280,6 +289,10 @@ function UF:Update_PlayerFrame(frame, db)
 
 		if USE_MINI_POWERBAR and not POWERBAR_DETACHED then
 			POWERBAR_WIDTH = POWERBAR_WIDTH / 2
+		end
+		
+		if not USE_POWERBAR_OFFSET then
+			POWERBAR_OFFSET = 0
 		end
 	end
 
@@ -383,11 +396,7 @@ function UF:Update_PlayerFrame(frame, db)
 				health.colorHealth = true
 			end
 		else
-			health.colorClass = true
-			health.colorReaction = true
-		end
-		if self.db['colors'].forcehealthreaction == true then
-			health.colorClass = false
+			health.colorClass = (not self.db['colors'].forcehealthreaction)
 			health.colorReaction = true
 		end
 
@@ -531,6 +540,12 @@ function UF:Update_PlayerFrame(frame, db)
 			end
 			if db.power.strataAndLevel.useCustomLevel then
 				power:SetFrameLevel(db.power.strataAndLevel.frameLevel)
+			end
+			
+			if POWERBAR_DETACHED and db.power.parent == "UIPARENT" then
+				power:SetParent(E.UIParent)
+			else
+				power:SetParent(frame)
 			end
 
 		elseif frame:IsElementEnabled('Power') then
@@ -1010,11 +1025,11 @@ function UF:Update_PlayerFrame(frame, db)
 			local attachTo = frame
 
 			if(E:CheckClassColor(buffColor.r, buffColor.g, buffColor.b)) then
-				buffColor = E.myclass == 'PRIEST' and E.PriestColors or RAID_CLASS_COLORS[E.myclass]
+				buffColor = E.myclass == 'PRIEST' and E.PriestColors or (CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[E.myclass] or RAID_CLASS_COLORS[E.myclass])
 			end
 
 			if(E:CheckClassColor(debuffColor.r, debuffColor.g, debuffColor.b)) then
-				debuffColor = E.myclass == 'PRIEST' and E.PriestColors or RAID_CLASS_COLORS[E.myclass]
+				debuffColor = E.myclass == 'PRIEST' and E.PriestColors or (CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[E.myclass] or RAID_CLASS_COLORS[E.myclass])
 			end
 
 			if db.aurabar.attachTo == 'BUFFS' then
@@ -1131,5 +1146,5 @@ f:RegisterEvent("PLAYER_ENTERING_WORLD")
 f:SetScript("OnEvent", function(self, event)
 	self:UnregisterEvent(event)
 	
-	C_Timer.After(5, UpdateAllRunes) --Delay it, since the WoW client updates Death Runes after PEW
+	C_TimerAfter(5, UpdateAllRunes) --Delay it, since the WoW client updates Death Runes after PEW
 end)

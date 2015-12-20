@@ -13,7 +13,6 @@ V['general'] = {
 	['chatBubbleFont'] = "ElvUI Font",
 	['chatBubbleFontSize'] = 14,
 	['pixelPerfect'] = true,
-	['lfrEnhancement'] = true,
 	['replaceBlizzFonts'] = true,
 	['smallerWorldMap'] = true,
 	['minimap'] = {
@@ -132,6 +131,7 @@ V['unitframe'] = {
 
 V["actionbar"] = {
 	["enable"] = true,
+	["hideCooldownBling"] = false,
 
 	["masque"] = {
 		["actionbars"] = false,

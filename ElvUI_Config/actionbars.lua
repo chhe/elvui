@@ -449,8 +449,16 @@ E.Options.args.actionbar = {
 				AB:UpdateButtonSettings();
 			end,
 		},
-		fontGroup = {
+		hideCooldownBling = {
 			order = 11,
+			type = "toggle",
+			name = L["Hide Cooldown Bling"],
+			desc = L["Hides the bling animation on buttons at the end of the global cooldown."],
+			get = function(info) return E.private.actionbar.hideCooldownBling end,
+			set = function(info, value) E.private.actionbar.hideCooldownBling = value; E:StaticPopup_Show("CONFIG_RL") end,
+		},
+		fontGroup = {
+			order = 12,
 			type = 'group',
 			guiInline = true,
 			disabled = function() return not E.private.actionbar.enable end,
@@ -484,7 +492,7 @@ E.Options.args.actionbar = {
 			},
 		},
 		masque = {
-			order = 12,
+			order = 13,
 			type = "group",
 			guiInline = true,
 			name = L["Masque Support"],
@@ -551,7 +559,6 @@ E.Options.args.actionbar = {
 			name = L["Boss Button"],
 			disabled = function() return not E.private.actionbar.enable end,
 			get = function(info) return E.db.actionbar.extraActionButton[ info[#info] ] end,
-			set = function(info, value) E.db.actionbar.extraActionButton[ info[#info] ] = value; AB:Extra_SetAlpha() end,
 			args = {
 				alpha = {
 					order = 1,
@@ -560,6 +567,15 @@ E.Options.args.actionbar = {
 					desc = L["Change the alpha level of the frame."],
 					isPercent = true,
 					min = 0, max = 1, step = 0.01,
+					set = function(info, value) E.db.actionbar.extraActionButton[ info[#info] ] = value; AB:Extra_SetAlpha() end,
+				},
+				scale = {
+					order = 2,
+					type = "range",
+					name = L["Scale"],
+					isPercent = true,
+					min = 0.2, max = 2, step = 0.01,
+					set = function(info, value) E.db.actionbar.extraActionButton[ info[#info] ] = value; AB:Extra_SetScale() end,
 				},
 			},
 		},

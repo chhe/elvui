@@ -1,9 +1,35 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local UF = E:GetModule('UnitFrames');
 
+--Cache global variables
+--Lua functions
+local unpack, select, assert, pairs = unpack, select, assert, pairs
+local tinsert = tinsert
 local random, floor, ceil = math.random, math.floor, math.ceil
 local format = string.format
-
+--WoW API / Variables
+local CreateFrame = CreateFrame
+local UnitIsUnit = UnitIsUnit
+local UnitReaction = UnitReaction
+local UnitIsPlayer = UnitIsPlayer
+local UnitClass = UnitClass
+local UnitAlternatePowerInfo = UnitAlternatePowerInfo
+local UnitHasVehicleUI = UnitHasVehicleUI
+local UnitHasVehicleUI = UnitHasVehicleUI
+local UnitPower = UnitPower
+local GetComboPoints = GetComboPoints
+local GetSpellInfo = GetSpellInfo
+local GetNumBattlefieldScores = GetNumBattlefieldScores
+local GetBattlefieldScore = GetBattlefieldScore
+local IsInInstance = IsInInstance
+local GetUnitName = GetUnitName
+local GetBattlefieldScore = GetBattlefieldScore
+local UnitGroupRolesAssigned = UnitGroupRolesAssigned
+local UnitIsConnected = UnitIsConnected
+local RAID_CLASS_COLORS = RAID_CLASS_COLORS
+local CUSTOM_CLASS_COLORS = CUSTOM_CLASS_COLORS
+local FACTION_BAR_COLORS = FACTION_BAR_COLORS
+local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 
 local LSM = LibStub("LibSharedMedia-3.0");
 function UF:Construct_TargetGlow(frame)
@@ -232,7 +258,7 @@ function UF:UpdateTargetGlow(event)
 		if UnitIsPlayer(unit) then
 			local _, class = UnitClass(unit)
 			if class then
-				local color = RAID_CLASS_COLORS[class]
+				local color = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
 				self.TargetGlow:SetBackdropBorderColor(color.r, color.g, color.b)
 			else
 				self.TargetGlow:SetBackdropBorderColor(1, 1, 1)
@@ -368,25 +394,26 @@ local textCounterOffsets = {
 
 function UF:UpdateAuraWatchFromHeader(group, petOverride)
 	assert(self[group], "Invalid group specified.")
-	for i=1, self[group]:GetNumChildren() do
-		local frame = select(i, self[group]:GetChildren())
+	local group = self[group]
+	for i=1, group:GetNumChildren() do
+		local frame = select(i, group:GetChildren())
 		if frame and frame.Health then
-			UF:UpdateAuraWatch(frame, petOverride)
+			UF:UpdateAuraWatch(frame, petOverride, group.db)
 		elseif frame then
 			for n = 1, frame:GetNumChildren() do
 				local child = select(n, frame:GetChildren())
 				if child and child.Health then
-					UF:UpdateAuraWatch(child, petOverride)
+					UF:UpdateAuraWatch(child, petOverride, group.db)
 				end
 			end
 		end
 	end
 end
 
-function UF:UpdateAuraWatch(frame, petOverride)
+function UF:UpdateAuraWatch(frame, petOverride, db)
 	local buffs = {};
 	local auras = frame.AuraWatch;
-	local db = frame.db.buffIndicator;
+	local db = db and db.buffIndicator or frame.db.buffIndicator
 
 	if not db.enable then
 		auras:Hide()

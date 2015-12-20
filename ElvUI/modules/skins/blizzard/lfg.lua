@@ -471,6 +471,15 @@ local function LoadSkin()
 	LFGListFrame.CategorySelection.Inset:StripTextures()
 	S:HandleButton(LFGListFrame.CategorySelection.StartGroupButton, true)
 	S:HandleButton(LFGListFrame.CategorySelection.FindGroupButton, true)
+	
+	--Fix issue with labels not following changes to GameFontNormal as they should
+	local function SetLabelFontObject(self, btnIndex)
+		local button = self.CategoryButtons[btnIndex]
+		if button then
+			button.Label:SetFontObject(GameFontNormal)
+		end
+	end
+	hooksecurefunc("LFGListCategorySelection_AddButton", SetLabelFontObject)
 
 	LFGListFrame.EntryCreation.Inset:StripTextures()
 	S:HandleButton(LFGListFrame.EntryCreation.CancelButton, true)

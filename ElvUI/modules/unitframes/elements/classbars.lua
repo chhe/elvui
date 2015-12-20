@@ -1,6 +1,24 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local UF = E:GetModule('UnitFrames');
 
+--Cache global variables
+--Lua functions
+local select = select
+local ceil, floor = math.ceil, math.floor
+--WoW API / Variables
+local CreateFrame = CreateFrame
+local UnitPower = UnitPower
+local UnitPowerMax = UnitPowerMax
+local IsSpellKnown = IsSpellKnown
+local GetEclipseDirection = GetEclipseDirection
+local SPELL_POWER_HOLY_POWER = SPELL_POWER_HOLY_POWER
+local SPELL_POWER_SHADOW_ORBS = SPELL_POWER_SHADOW_ORBS
+local SHADOW_ORB_MINOR_TALENT_ID = SHADOW_ORB_MINOR_TALENT_ID
+local SPELL_POWER_CHI = SPELL_POWER_CHI
+
+--Global variables that we don't cache, list them here for mikk's FindGlobals script
+-- GLOBALS: ElvUF_Player
+
 local _, ns = ...
 local ElvUF = ns.oUF
 assert(ElvUF, "ElvUI was unable to locate oUF.")
@@ -42,23 +60,27 @@ function UF:UpdateHoly(event, unit, powerType)
 	local USE_PORTRAIT = db.portrait.enable
 	local USE_PORTRAIT_OVERLAY = db.portrait.overlay and USE_PORTRAIT
 	local PORTRAIT_WIDTH = db.portrait.width
+	local USE_POWERBAR = db.power.enable
 	local POWERBAR_DETACHED = db.power.detachFromFrame
 	local USE_POWERBAR_OFFSET = db.power.offset ~= 0 and USE_POWERBAR and not POWERBAR_DETACHED
+	local POWERBAR_OFFSET = db.power.offset
 	local CLASSBAR_HEIGHT = db.classbar.height
 	local DETACHED = db.classbar.detachFromFrame
-	local HEALTH_OFFSET_Y = DETACHED and 0 or USE_MINI_CLASSBAR and (BORDER+(CLASSBAR_HEIGHT/2)) or (BORDER+CLASSBAR_HEIGHT+SPACING)
+	local HEALTH_OFFSET_Y = DETACHED and BORDER or USE_MINI_CLASSBAR and (BORDER+(CLASSBAR_HEIGHT/2)) or (BORDER+CLASSBAR_HEIGHT+SPACING)
 
 	if USE_PORTRAIT_OVERLAY or not USE_PORTRAIT then
 		PORTRAIT_WIDTH = 0
 	end
 
-	local CLASSBAR_WIDTH = db.width - (E.Border * 2)
+	local CLASSBAR_WIDTH = db.width - (BORDER * 2)
 	if USE_PORTRAIT then
 		CLASSBAR_WIDTH = ceil((db.width - (BORDER*2)) - PORTRAIT_WIDTH)
 	end
 
 	if USE_POWERBAR_OFFSET then
-		CLASSBAR_WIDTH = CLASSBAR_WIDTH - db.power.offset
+		CLASSBAR_WIDTH = CLASSBAR_WIDTH - POWERBAR_OFFSET
+	else
+		POWERBAR_OFFSET = 0
 	end
 
 	if USE_MINI_CLASSBAR then
@@ -73,11 +95,11 @@ function UF:UpdateHoly(event, unit, powerType)
 
 	if numHolyPower == 0 and db.classbar.autoHide then
 		self.HolyPower:Hide()
-		self.Health:Point("TOPRIGHT", self, "TOPRIGHT", -BORDER, -BORDER)
+		self.Health:Point("TOPRIGHT", self, "TOPRIGHT", -(BORDER+POWERBAR_OFFSET), -BORDER)
 		self.Health:Point("TOPLEFT", self, "TOPLEFT", BORDER+PORTRAIT_WIDTH, -BORDER)
 	else
 		self.HolyPower:Show()
-		self.Health:Point("TOPRIGHT", self, "TOPRIGHT", -BORDER, -HEALTH_OFFSET_Y)
+		self.Health:Point("TOPRIGHT", self, "TOPRIGHT", -(BORDER+POWERBAR_OFFSET), -HEALTH_OFFSET_Y)
 		self.Health:Point("TOPLEFT", self, "TOPLEFT", BORDER+PORTRAIT_WIDTH, -HEALTH_OFFSET_Y)
 
 		for i = 1, MAX_HOLY_POWER do
@@ -87,9 +109,9 @@ function UF:UpdateHoly(event, unit, powerType)
 				self.HolyPower[i]:SetAlpha(.2)
 			end
 			if db.classbar.fill == "spaced" then
-				self.HolyPower[i]:SetWidth((self.HolyPower:GetWidth() - ((maxHolyPower == 5 and 7 or 13)*(maxHolyPower - 1))) / maxHolyPower)
+				self.HolyPower[i]:Width((self.HolyPower:GetWidth() - ((maxHolyPower == 5 and 7 or 13)*(maxHolyPower - 1))) / maxHolyPower)
 			else
-				self.HolyPower[i]:SetWidth((self.HolyPower:GetWidth() - (maxHolyPower - 1)) / maxHolyPower)
+				self.HolyPower[i]:Width((self.HolyPower:GetWidth() - (maxHolyPower - 1)) / maxHolyPower)
 			end
 
 			self.HolyPower[i]:ClearAllPoints()
@@ -174,6 +196,7 @@ function UF:UpdateHarmony()
 
 	if USE_POWERBAR_OFFSET then
 		CLASSBAR_WIDTH = CLASSBAR_WIDTH - POWERBAR_OFFSET
+		HEALTH_OFFSET_X = HEALTH_OFFSET_X + POWERBAR_OFFSET
 	end
 
 	if db.classbar.fill == 'spaced' then
@@ -194,7 +217,7 @@ function UF:UpdateHarmony()
 
 	self:SetWidth(CLASSBAR_WIDTH)
 	local colors = ElvUF.colors.Harmony
-	
+
 	if numChi == 0 and db.classbar.autoHide then
 		self:Hide()
 		frame.Health:Point("TOPRIGHT", frame, "TOPRIGHT", -HEALTH_OFFSET_X, -BORDER)
@@ -441,6 +464,7 @@ function UF:UpdateShadowOrbs(event, unit, powerType)
 	local USE_PORTRAIT = db.portrait.enable
 	local USE_PORTRAIT_OVERLAY = db.portrait.overlay and USE_PORTRAIT
 	local PORTRAIT_WIDTH = db.portrait.width
+	local USE_POWERBAR = db.power.enable
 	local POWERBAR_DETACHED = db.power.detachFromFrame
 	local USE_POWERBAR_OFFSET = db.power.offset ~= 0 and USE_POWERBAR and not POWERBAR_DETACHED
 

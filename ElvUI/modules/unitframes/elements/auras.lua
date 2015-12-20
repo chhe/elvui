@@ -1,8 +1,23 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local UF = E:GetModule('UnitFrames');
-
-local tsort = table.sort
 local LSM = LibStub("LibSharedMedia-3.0");
+
+--Cache global variables
+--Lua functions
+local unpack, type = unpack, type
+local tsort = table.sort
+local format = format
+--WoW API / Variables
+local GetTime = GetTime
+local CreateFrame = CreateFrame
+local IsShiftKeyDown = IsShiftKeyDown
+local IsAltKeyDown = IsAltKeyDown
+local IsControlKeyDown = IsControlKeyDown
+local UnitAura = UnitAura
+local UnitIsFriend = UnitIsFriend
+
+--Global variables that we don't cache, list them here for mikk's FindGlobals script
+-- GLOBALS: DebuffTypeColor
 
 function UF:Construct_Buffs(frame)
 	local buffs = CreateFrame('Frame', frame:GetName().."Buffs", frame)

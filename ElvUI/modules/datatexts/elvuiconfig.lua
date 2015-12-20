@@ -1,12 +1,22 @@
 local E, L, V, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local DT = E:GetModule('DataTexts')
 
+--Cache global variables
+--Lua functions
+local pairs = pairs
+local find, join = string.find, string.join
+--WoW API / Variables
+local GetNumAddOns = GetNumAddOns
+local GetAddOnInfo = GetAddOnInfo
+local GetAddOnMetadata = GetAddOnMetadata
+local IsShiftKeyDown = IsShiftKeyDown
+local ReloadUI = ReloadUI
+
 local displayString = ""
 local configText = "ElvUI Config"
 local reloadText = RELOADUI
 local plugins
-local find = string.find
-local join = string.join
+local lastPanel
 
 local function OnEvent(self, event, ...)
 	lastPanel = self
@@ -70,4 +80,3 @@ E['valueColorUpdateFuncs'][ValueColorUpdate] = true
 	onLeaveFunc - function to fire OnLeave, if not provided one will be set for you that hides the tooltip.
 ]]
 DT:RegisterDatatext('ElvUI Config', {'PLAYER_ENTERING_WORLD'}, OnEvent, nil, Click, OnEnter)
-

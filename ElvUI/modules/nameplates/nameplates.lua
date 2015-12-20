@@ -2,26 +2,50 @@ local E, L, V, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, Private
 local NP = E:NewModule('NamePlates', 'AceHook-3.0', 'AceEvent-3.0', 'AceTimer-3.0')
 local LSM = LibStub("LibSharedMedia-3.0")
 
-local numChildren = -1
-local twipe = table.wipe
-local tsort = table.sort
-local tinsert = table.insert
-local band = bit.band
-local gsub = string.gsub
-local tolower = string.lower
-local targetIndicator
+--Cache global variables
+--Lua functions
 local _G = _G
-local targetAlpha = 1
-local WorldFrame = WorldFrame
-local tonumber = tonumber
-local pairs = pairs
-local RAID_CLASS_COLORS = RAID_CLASS_COLORS
+local tonumber, pairs, select, tostring, unpack = tonumber, pairs, select, tostring, unpack
+local twipe, tsort, tinsert, wipe = table.wipe, table.sort, table.insert, wipe
+local band = bit.band
+local floor = math.floor
+local gsub, format, strsplit = string.gsub, format, strsplit
+--WoW API / Variables
+local CreateFrame = CreateFrame
+local GetTime = GetTime
 local UnitGUID = UnitGUID
 local UnitHealthMax = UnitHealthMax
-local floor = math.floor
-local select = select
-local tostring = tostring
-local unpack = unpack
+local GetNumBattlefieldScores = GetNumBattlefieldScores
+local GetBattlefieldScore = GetBattlefieldScore
+local GetNumArenaOpponentSpecs = GetNumArenaOpponentSpecs
+local UnitName = UnitName
+local GetArenaOpponentSpec = GetArenaOpponentSpec
+local GetSpecializationInfoByID = GetSpecializationInfoByID
+local InCombatLockdown = InCombatLockdown
+local UnitExists = UnitExists
+local IsInInstance = IsInInstance
+local SetCVar = SetCVar
+local IsAddOnLoaded = IsAddOnLoaded
+local GetComboPoints = GetComboPoints
+local UnitHasVehicleUI = UnitHasVehicleUI
+local GetSpellInfo = GetSpellInfo
+local GetSpellTexture = GetSpellTexture
+local UnitBuff, UnitDebuff = UnitBuff, UnitDebuff
+local UnitPlayerControlled = UnitPlayerControlled
+local GetRaidTargetIndex = GetRaidTargetIndex
+local WorldFrame = WorldFrame
+local RAID_CLASS_COLORS = RAID_CLASS_COLORS
+local CUSTOM_CLASS_COLORS = CUSTOM_CLASS_COLORS
+local UNKNOWN = UNKNOWN
+local MAX_COMBO_POINTS = MAX_COMBO_POINTS
+local COMBATLOG_OBJECT_CONTROL_PLAYER = COMBATLOG_OBJECT_CONTROL_PLAYER
+
+--Global variables that we don't cache, list them here for mikk's FindGlobals script
+-- GLOBALS: UIParent, AURA_TYPE_BUFF, AURA_TYPE_DEBUFF
+
+local numChildren = -1
+local targetIndicator
+local targetAlpha = 1
 
 --Pattern to remove cross realm label added to the end of plate names
 --Taken from http://www.wowace.com/addons/libnameplateregistry-1-0/
@@ -318,6 +342,7 @@ function NP:UpdateLevelAndName(myPlate)
 		myPlate.name:Hide()
 	else
 		myPlate.name:SetText(self.name:GetText())
+		myPlate.name.stringHeight = myPlate.name:GetStringHeight()
 		if not myPlate.name:IsShown() then myPlate.name:Show() end
 	end
 
@@ -382,7 +407,9 @@ function NP:ColorizeAndScale(myPlate)
 	local canAttack = false
 
 	self.unitType = unitType
-	if RAID_CLASS_COLORS[unitType] then
+	if CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[unitType] then
+		color = CUSTOM_CLASS_COLORS[unitType]
+	elseif RAID_CLASS_COLORS[unitType] then
 		color = RAID_CLASS_COLORS[unitType]
 	elseif unitType == "TAPPED_NPC" then
 		color = NP.db.reactions.tapped
@@ -882,7 +909,8 @@ function NP:UpdateSettings()
 	--Name
 	myPlate.name:FontTemplate(font, fontSize, fontOutline)
 	myPlate.name:SetTextColor(1, 1, 1)
-	myPlate.name:SetWordWrap(wrapName == true and true or false)
+	myPlate.name:SetHeight(2.5*fontSize)
+	myPlate.name:SetWordWrap(wrapName)
 
 	--Level
 	myPlate.level:FontTemplate(font, fontSize, fontOutline)
@@ -946,6 +974,11 @@ function NP:UpdateSettings()
 			end
 		end
 	end
+
+	local stringHeight = myPlate.name:GetStringHeight()
+	local yOffset = stringHeight > 0 and stringHeight or myPlate.name.stringHeight
+	myPlate.DebuffWidget:SetPoint('BOTTOMRIGHT', myPlate.healthBar, 'TOPRIGHT', 0, yOffset)
+	myPlate.DebuffWidget:SetPoint('BOTTOMLEFT', myPlate.healthBar, 'TOPLEFT', 0, yOffset)
 
 	--ComboPoints
 	if(NP.db.comboPoints and not myPlate.cPoints:IsShown()) then
@@ -1033,6 +1066,8 @@ function NP:CreatePlate(frame)
 	--Name
 	myPlate.name = myPlate:CreateFontString(nil, 'OVERLAY')
 	myPlate.name:SetJustifyH("LEFT")
+	myPlate.name:SetJustifyV("BOTTOM")
+	myPlate.name.stringHeight = frame.name:GetStringHeight()
 
 	--Raid Icon
 	frame.raidIcon:SetAlpha(0)
@@ -1055,10 +1090,11 @@ function NP:CreatePlate(frame)
 	myPlate.overlay:Hide()
 
 	local debuffHeader = CreateFrame("Frame", nil, myPlate)
+	local yOffset = myPlate.name.stringHeight or 10
 	debuffHeader:SetHeight(32);
 	debuffHeader:Show()
-	debuffHeader:SetPoint('BOTTOMRIGHT', myPlate.healthBar, 'TOPRIGHT', 0, 10)
-	debuffHeader:SetPoint('BOTTOMLEFT', myPlate.healthBar, 'TOPLEFT', 0, 10)
+	debuffHeader:SetPoint('BOTTOMRIGHT', myPlate.healthBar, 'TOPRIGHT', 0, yOffset)
+	debuffHeader:SetPoint('BOTTOMLEFT', myPlate.healthBar, 'TOPLEFT', 0, yOffset)
 	debuffHeader:SetFrameStrata("BACKGROUND")
 	debuffHeader:SetFrameLevel(0)
 	debuffHeader.PollFunction = NP.UpdateAuraTime

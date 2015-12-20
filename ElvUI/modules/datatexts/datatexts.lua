@@ -3,7 +3,19 @@ local DT = E:NewModule('DataTexts', 'AceTimer-3.0', 'AceHook-3.0', 'AceEvent-3.0
 local LDB = LibStub:GetLibrary("LibDataBroker-1.1");
 local LSM = LibStub("LibSharedMedia-3.0")
 local TT = E:GetModule("Tooltip")
+
+--Cache global variables
+--Lua functions
+local pairs, type, error = pairs, type, error
 local len = string.len
+--WoW API / Variables
+local CreateFrame = CreateFrame
+local UnitGUID = UnitGUID
+local InCombatLockdown = InCombatLockdown
+local IsInInstance = IsInInstance
+
+--Global variables that we don't cache, list them here for mikk's FindGlobals script
+-- GLOBALS: GameTooltip, ElvConfigToggle
 
 function DT:Initialize()
 	--if E.db["datatexts"].enable ~= true then return end
@@ -65,7 +77,7 @@ function DT:RegisterLDB()
 			if value == nil or (len(value) >= 3) or value == 'n/a' or name == value then
 				curFrame.text:SetText(value ~= 'n/a' and value or name)
 			else
-				curFrame.text:SetText(name..': '..hex..value..'|r')
+				curFrame.text:SetFormattedText("%s: %s%s|r", name, hex, value)
 			end
 		end
 
@@ -150,8 +162,6 @@ function DT:RegisterPanel(panel, numPoints, anchor, xOff, yOff)
 	panel:SetScript('OnSizeChanged', DT.UpdateAllDimensions)
 	DT.UpdateAllDimensions(panel)
 end
-
-
 
 function DT:AssignPanelToDataText(panel, data)
 	panel.name = ""

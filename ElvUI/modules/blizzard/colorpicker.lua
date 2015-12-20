@@ -5,7 +5,23 @@ local E, L, DF = unpack(select(2, ...))
 local B = E:GetModule('Blizzard');
 local S = E:GetModule('Skins');
 
-local format, floor = string.format, math.floor
+--Cache global variables
+local tonumber, collectgarbage = tonumber, collectgarbage
+local floor = math.floor
+local format, strsub = string.format, strsub
+--WoW API / Variables
+local CreateFrame = CreateFrame
+local RAID_CLASS_COLORS = RAID_CLASS_COLORS
+local CUSTOM_CLASS_COLORS = CUSTOM_CLASS_COLORS
+local CALENDAR_COPY_EVENT, CALENDAR_PASTE_EVENT = CALENDAR_COPY_EVENT, CALENDAR_PASTE_EVENT
+local CLASS, DEFAULT = CLASS, DEFAULT
+
+--Global variables that we don't cache, list them here for mikk's FindGlobals script
+-- GLOBALS: ColorPickerFrame, OpacitySliderFrame, ColorPPBoxA, ColorPPBoxR, ColorPPBoxG
+-- GLOBALS: ColorPPBoxB, ColorPPBoxH, ColorSwatch, ColorPickerFrameHeader, ColorPPPaste
+-- GLOBALS: IsAddOnLoaded, ColorPickerOkayButton, ColorPickerCancelButton
+-- GLOBALS: ColorPPCopyColorSwatch, ColorPPBoxLabelA, ColorPPOldColorSwatch
+
 local initialized = nil
 local colorBuffer = {}
 local editingText
@@ -191,10 +207,9 @@ function B:EnhanceColorPicker()
 	b:Width(80)
 	b:Height(22)
 	b:Point("TOP", "ColorPPCopy", "BOTTOMRIGHT", 0, -7)
-	
 
 	b:SetScript('OnClick', function()
-		local color = E.myclass == 'PRIEST' and E.PriestColors or RAID_CLASS_COLORS[E.myclass];
+		local color = E.myclass == 'PRIEST' and E.PriestColors or (CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[E.myclass] or RAID_CLASS_COLORS[E.myclass]);
 		ColorPickerFrame:SetColorRGB(color.r, color.g, color.b)
 		ColorSwatch:SetTexture(color.r, color.g, color.b)
 		if ColorPickerFrame.hasOpacity then
@@ -282,7 +297,7 @@ function B:EnhanceColorPicker()
 			box:SetNumeric(false)
 		else
 			box:SetMaxLetters(3)
-			box:Width(32)
+			box:Width(40)
 			box:SetNumeric(true)
 		end
 		box:SetPoint("TOP", "ColorPickerWheel", "BOTTOM", 0, -15)
